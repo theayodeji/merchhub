@@ -1,6 +1,6 @@
 // pages/api/products/[id].js
 import dbConnect from "@/db/index";
-import User from '.@/models/User';
+import User from '@/models/User';
 
 export async function GET(req, res) {
   await dbConnect();
