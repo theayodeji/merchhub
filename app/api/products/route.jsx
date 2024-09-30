@@ -1,40 +1,68 @@
-// pages/api/products/index.js
-import dbConnect from '@/db/index';
-import Product from '@/models/Product';
+// app/api/products/route.js
+import dbConnect from "@/db/index";
+import Product from "@/models/Product";
 
-export default async function handler(req, res) {
+export async function GET(request) {
   await dbConnect();
 
-  if (req.method === 'GET') {
-    // Get all products
-    const products = await Product.find({}).populate('creator');
-    res.status(200).json(products);
-  } else if (req.method === 'POST') {
-    // Create a new product
-    try {
-      // Assuming the creatorId is sent in the request body or through authentication
-      const { name, description, price, category, image, stock, creatorId } = req.body;
-
-      if (!creatorId) {
-        return res.status(400).json({ message: 'Creator ID is required' });
+  try {
+    const products = await Product.find({}).populate("creator");
+    return new Response(JSON.stringify(products), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ message: "Failed to fetch products", error }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
+    );
+  }
+}
 
-      const product = new Product({
-        name,
-        description,
-        price,
-        category,
-        image,
-        stock,
-        creator: creatorId
-      });
+export async function POST(request) {
+  await dbConnect();
 
-      await product.save();
-      res.status(201).json(product);
-    } catch (error) {
-      res.status(400).json({ message: 'Failed to create product', error });
+  const body = await request.json(); // Get the JSON body from the request
+
+  try {
+    const { name, description, price, category, image, stock, creatorId } =
+      body;
+
+    if (!creatorId) {
+      return new Response(
+        JSON.stringify({ message: "Creator ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+
+    const product = new Product({
+      name,
+      description,
+      price,
+      category,
+      image,
+      stock,
+      creator: creatorId,
+    });
+
+    await product.save();
+    return new Response(JSON.stringify(product), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ message: "Failed to create product", error }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }

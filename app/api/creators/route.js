@@ -1,6 +1,6 @@
 // pages/api/creators/index.js
-import dbConnect from '../../../db/index';
-import Creator from '../../../models/Creator';
+import dbConnect from '@/db/index';
+import Creator from '@/models/Creator';
 
 export default async function handler(req, res) {
   await dbConnect();
