@@ -50,14 +50,3 @@ export async function DELETE(req, res) {
   }
 }
 
-export default async function handler(req, res) {
-  if (req.method === 'GET') {
-    return GET(req, res);
-  } else if (req.method === 'PUT') {
-    return PUT(req, res);
-  } else if (req.method === 'DELETE') {
-    return DELETE(req, res);
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
-  }
-}
