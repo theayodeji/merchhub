@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/(root)/(creators)/dashboard/page.jsx", "app/(root)/(user)/marketplace/page.jsx", "app/(root)/(user)/layout.jsx", "app/(root)/(user)/page.jsx", "components/shared/Topbar.jsx", "app/(auth)/signup/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/(root)/(creators)/dashboard/page.jsx", "app/(root)/(user)/marketplace/page.jsx", "app/(root)/(user)/layout.jsx", "app/(root)/(user)/page.jsx", "components/shared/Topbar.jsx", "app/(auth)/signup/page.jsx", "app/(auth)/layout.jsx", "app/(auth)/signin/page.jsx", "app/(root)/(creators)/dashboard/layout.jsx", "components/shared/LeftSidebar.jsx", "components/shared/Bottombar.jsx"],
   "exclude": ["node_modules"]
 }

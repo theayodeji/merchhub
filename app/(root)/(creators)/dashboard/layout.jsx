@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "../../../globals.css";
 import Topbar from "@/components/shared/Topbar";
@@ -11,23 +10,19 @@ const poppins = Poppins({
   display: 'swap', // Use swap for better performance
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "MerchHub | Creator Marketplace",
   description: "Get the hottest creator merch",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({children}) {
   return (
     <html lang="en">
       <body className={poppins.className}>
         <main className="bg-gray-100 ">
           <LeftSidebar userRole={'customer'}/>
           <section className="main-container ms-0 sm:ms-[11vw] lg:ms-[245px] min-h-[100vh] flex flex-col">
-            <Topbar />
+            <Topbar user={'kai'}/>
             <div className="w-full flex-1">
               {children}
             </div>

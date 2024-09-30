@@ -4,7 +4,7 @@ import Logo from "./Logo"
 import { creatorLinks, customerLinks, adminLinks, commonLinks } from '../../constants/index';
 import Link from 'next/link';
 
-const LeftSidebar = ({ userRole } : {userRole : string}) => {
+const LeftSidebar = ({ userRole }) => {
   let links;
 
   switch (userRole) {
