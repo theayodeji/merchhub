@@ -6,6 +6,34 @@ const SignupPage = () => {
 
   const router = useRouter();
 
+  async function handleSubmit(e){
+    e.preventDefault();
+
+    try{
+      const formdata = new FormData(e.currentTarget);
+
+      const username = formdata.get('username');
+      const password = formdata.get('password');
+      const email = formdata.get('email');
+
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          username, email, password
+        })
+      })
+      
+      res.status === 201 && router.push('/onboarding')
+      
+
+    }catch(e){
+       console.log(e.message)
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Image Section */}
@@ -19,23 +47,26 @@ const SignupPage = () => {
       {/* Form Section */}
       <div className="lg:w-1/2 w-full flex items-center justify-center p-8 lg:p-20">
         <div className="w-full max-w-md">
-          <img src="/assets/logo.png" alt="" width={300}/>
+          <img src="/assets/logo.png" alt="" width={300} className="mx-auto"/>
           <h2 className="text-3xl font-bold mb-6 text-gray-800">
             Create Your Account
           </h2>
-          <form className="space-y-4">
+          <form 
+          onSubmit={handleSubmit}
+          className="space-y-4">
             <div>
               <label
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700"
               >
-                Name
+                Username
               </label>
               <input
                 type="text"
-                id="name"
+                id="username"
+                name='username'
                 className="w-full border border-solid border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                placeholder="Enter your full name"
+                placeholder="Enter your preferred username"
               />
             </div>
 
@@ -49,6 +80,7 @@ const SignupPage = () => {
               <input
                 type="email"
                 id="email"
+                name='email'
                 className="w-full border border-solid border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                 placeholder="Enter your email"
               />
@@ -64,6 +96,7 @@ const SignupPage = () => {
               <input
                 type="password"
                 id="password"
+                name='password'
                 className="w-full border border-solid border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                 placeholder="Create a password"
               />
@@ -87,11 +120,6 @@ const SignupPage = () => {
             <button
               type="submit"
               className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition duration-300"
-              onClick={(e) => {
-                e.preventDefault()
-                router.push('/onboarding')
-              }
-              }
             >
               Sign Up
             </button>

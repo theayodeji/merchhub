@@ -25,7 +25,7 @@ const OnboardingScreen = () => {
   return (
     <div className="min-h-screen flex">
       {/* Form Section */}
-      <div className=" w-full flex items-start justify-start p-8 lg:p-20">
+      <div className=" w-1/2 flex items-start justify-start p-8 lg:p-20">
         <div className="w-full max-w-lg">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">
             Complete Your Profile
@@ -216,6 +216,7 @@ const OnboardingScreen = () => {
           </form>
         </div>
       </div>
+      <div className="w-1/2 h-100 bg-[url('/assets/onboarding.jpg')] bg-no-repeat bg-cover bg-center"></div>
     </div>
   );
 };

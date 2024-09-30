@@ -17,7 +17,7 @@ const SignIn = () => {
       {/* Form Section */}
       <div className="lg:w-1/2 w-full flex items-center justify-center p-8 lg:p-20 ">
         <div className="w-full max-w-md">
-        <img src="/assets/logo.png" alt="" width={300}/>
+        <img src="/assets/logo.png" alt="" width={300} className="mx-auto"/>
           <h2 className="text-3xl font-bold mb-6 text-gray-800">Login to Your Account</h2>
           <form className="space-y-4">
             <div>
