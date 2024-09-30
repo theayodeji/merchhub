@@ -1,18 +1,46 @@
-// pages/api/creators/index.js
-import dbConnect from '@/db/index';
-import Creator from '@/models/Creator';
+// app/api/creators/route.js
+import dbConnect from "@/db/index";
+import Creator from "@/models/Creator";
 
-export default async function handler(req, res) {
+export async function GET(request) {
   await dbConnect();
 
-  if (req.method === 'GET') {
+  try {
     const creators = await Creator.find({});
-    res.status(200).json(creators);
-  } else if (req.method === 'POST') {
-    const creator = new Creator(req.body);
+    return new Response(JSON.stringify(creators), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ message: "Failed to fetch creators", error }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+}
+
+export async function POST(request) {
+  await dbConnect();
+
+  const body = await request.json(); // Get the JSON body from the request
+
+  try {
+    const creator = new Creator(body);
     await creator.save();
-    res.status(201).json(creator);
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    return new Response(JSON.stringify(creator), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ message: "Failed to create creator", error }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
