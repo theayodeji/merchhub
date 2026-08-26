@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  phone     String?
+  password  String
+  username  String   @unique
+  role      UserRole @default(CUSTOMER)
+  createdAt DateTime @default(now())
+
+  Creator  Creator?
+  Customer Customer?
+}
+
+model Creator {
+  id          String    @id @default(uuid())
+  name        String
+  bio         String?
+  verified    Boolean   @default(false)
+  socialLinks Json?
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id])
+  products    Product[]
+  orders      Order[]
+}
+
+model Customer {
+  id              String  @id @default(uuid())
+  name            String?
+  deliveryAddress String?
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id])
+  orders          Order[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float //in cents
+  creatorId   String
+  creator     Creator  @relation(fields: [creatorId], references: [id])
+  images      String[]
+  stock       Int
+  createdAt   DateTime @default(now())
+
+  orders     Order[]
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+
+  @@index([creatorId])
+  @@index([categoryId])
+}
+
+model Order {
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  creatorId String
+  creator   Creator @relation(fields: [creatorId], references: [id])
+
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id])
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  deliveryAddress String
+
+  quantity  Int
+  unitPrice Float
+  total     Float
+  status    OrderStatus @default(PENDING)
+
+  transaction   Transaction?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([creatorId])
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String
+  slug     String    @unique
+  products Product[]
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  orderId       String   @unique
+  order         Order    @relation(fields: [orderId], references: [id])
+  amount        Float
+  currency      String
+  status        TransactionStatus @default(PENDING)
+  paymentMethod String
+  createdAt     DateTime @default(now())
+}
+
+enum UserRole {
+  CREATOR
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
