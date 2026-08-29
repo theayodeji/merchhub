@@ -1,0 +1,33 @@
+import { Request, Response } from 'express';
+import asyncHandler from 'express-async-handler';
+import { getProfile as fetchProfile } from '../services/get-profile.service';
+import { updateProfile as editProfile } from '../services/update-profile.service';
+import { getCategories as fetchCategories } from '../services/get-categories.service';
+import { updateProfileSchema } from '../dto/user.dto';
+
+// req.user is set by the requireAuth middleware
+export const getProfile = asyncHandler(async (req: Request, res: Response) => {
+  const userId = (req as any).user.id;
+  
+  const profile = await fetchProfile(userId);
+  if (!profile) {
+    res.status(404);
+    throw new Error('Profile not found');
+  }
+  
+  res.json(profile);
+});
+
+export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
+  const userId = (req as any).user.id;
+  
+  const data = updateProfileSchema.parse(req.body);
+  const profile = await editProfile(userId, data);
+  
+  res.json(profile);
+});
+
+export const getCategories = asyncHandler(async (req: Request, res: Response) => {
+  const categories = await fetchCategories();
+  res.json(categories);
+});

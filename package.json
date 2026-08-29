@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm -r dev",
+    "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
     "start": "pnpm -r start"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.12"
   }
 }

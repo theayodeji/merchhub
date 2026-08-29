@@ -2,10 +2,22 @@
   "name": "@merchhub/db",
   "version": "1.0.0",
   "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "push": "prisma db push",
+    "migrate": "prisma migrate dev",
+    "generate": "prisma generate",
+    "seed": "tsx prisma/seed.ts",
+    "studio": "prisma studio"
+  },
   "dependencies": {
     "@prisma/client": "^7.0.0"
   },
   "devDependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@types/pg": "^8.23.1",
+    "dotenv": "^17.4.2",
+    "pg": "^8.23.0",
     "prisma": "^7.0.0"
   }
 }
