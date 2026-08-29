@@ -29,17 +29,19 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   const isOnboardingRoute = location.pathname === paths.app.onboarding.path;
 
-  // If they have no creatorCategory setup and we aren't on onboarding, send them to onboarding
-  // We assume no category means they haven't made a choice yet. Wait, if they choose customer, they bypass the form.
-  // Actually, we need to track if they've completed onboarding. 
-  // For now, if the API errors (404), go to onboarding.
-  if (isError && !isOnboardingRoute) {
+  // Redirect to onboarding if not onboarded
+  if (profile && !profile.isOnboarded && !isOnboardingRoute) {
     return <Navigate to={paths.app.onboarding.path} replace />;
   }
 
-  // If profile successfully loads, it means they exist. We don't force onboarding again.
-  if (profile && isOnboardingRoute) {
+  // Redirect away from onboarding if already onboarded
+  if (profile && profile.isOnboarded && isOnboardingRoute) {
     return <Navigate to={paths.app.dashboard.path} replace />;
+  }
+  
+  // If profile is missing completely (e.g. error fetching) and they are not on onboarding, send them there as fallback
+  if (isError && !isOnboardingRoute) {
+    return <Navigate to={paths.app.onboarding.path} replace />;
   }
 
   return <>{children}</>;

@@ -1,0 +1,64 @@
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { IStorageService } from './StorageService.interface';
+import crypto from 'crypto';
+import path from 'path';
+
+export interface S3Config {
+  bucketName: string;
+  publicUrl: string;
+  endpoint?: string;
+  region: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+}
+
+export class S3StorageService implements IStorageService {
+  private client: S3Client;
+  private bucketName: string;
+  private publicUrl: string;
+
+  constructor(config: S3Config) {
+    this.bucketName = config.bucketName;
+    this.publicUrl = config.publicUrl;
+    
+    this.client = new S3Client({
+      region: config.region,
+      endpoint: config.endpoint,
+      credentials: {
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+      },
+    });
+  }
+
+  async uploadFile(file: Express.Multer.File, folder: string): Promise<string> {
+    const ext = path.extname(file.originalname);
+    const uuid = crypto.randomUUID();
+    const fileName = `${folder}/${Date.now()}-${uuid}${ext}`;
+    
+    const command = new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: fileName,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    });
+
+    await this.client.send(command);
+    
+    // Return the public URL
+    return `${this.publicUrl}/${fileName}`;
+  }
+
+  async deleteFile(fileUrl: string): Promise<void> {
+    if (!fileUrl.startsWith(this.publicUrl)) return;
+    
+    const key = fileUrl.replace(`${this.publicUrl}/`, '');
+    
+    const command = new DeleteObjectCommand({
+      Bucket: this.bucketName,
+      Key: key,
+    });
+
+    await this.client.send(command);
+  }
+}

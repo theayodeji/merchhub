@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { 
-  Store, ShoppingBag, LayoutDashboard, Settings, PackageOpen, 
-  Flag, HelpCircle, ChevronLeft, ChevronRight
+  Store, ShoppingBag, LayoutDashboard, Settings, PackageOpen, HelpCircle, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { paths } from '../../config/paths';
 import { useProfile } from '../../features/profile/hooks/useProfile';
@@ -16,7 +15,7 @@ const mainNavItems: NavItem[] = [
   { name: 'Overview', href: paths.app.dashboard.path, icon: LayoutDashboard },
   { name: 'Products', href: '/dashboard/products', icon: PackageOpen, badge: 2 },
   { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag, badge: 14 },
-  { name: 'Setting', href: '/dashboard/settings', icon: Settings },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   { name: 'Support', href: '#', icon: HelpCircle },
 ];
 

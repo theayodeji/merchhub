@@ -6,6 +6,7 @@ import { CreatorDashboardLayout } from '../components/layout/CreatorDashboardLay
 
 const DashboardHome = React.lazy(() => import('../pages/Dashboard/DashboardHome'));
 const Onboarding = React.lazy(() => import('../pages/Onboarding/Onboarding'));
+const Settings = React.lazy(() => import('../pages/Dashboard/Settings'));
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -19,6 +20,10 @@ export const protectedRoutes: RouteObject[] = [
       {
         index: true,
         element: <DashboardHome />,
+      },
+      {
+        path: 'dashboard/settings',
+        element: <Settings />,
       },
     ],
   },

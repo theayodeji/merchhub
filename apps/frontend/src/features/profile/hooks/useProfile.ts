@@ -3,6 +3,8 @@ import { fetchCategories, updateProfile, fetchProfile, type UpdateProfileData } 
 import { useNavigate } from 'react-router-dom';
 import { paths } from '../../../config/paths';
 
+import { useToast } from '@merchhub/ui';
+
 export const useProfileCategories = () => {
   return useQuery({
     queryKey: ['creator-categories'],
@@ -22,12 +24,24 @@ export const useProfile = (enabled: boolean = true) => {
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: (data: UpdateProfileData) => updateProfile(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      toast({
+        title: "Profile Setup Complete",
+        description: "Your storefront is ready! Welcome to your dashboard.",
+      });
       navigate(paths.app.dashboard.getHref());
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Something went wrong while saving your profile.",
+        variant: "destructive",
+      });
     },
   });
 };

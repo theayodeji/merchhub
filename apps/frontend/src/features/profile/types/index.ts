@@ -16,10 +16,12 @@ export interface UserProfile {
   id: string;
   name: string;
   email: string;
+  username?: string;
   image?: string;
   displayUsername?: string;
   bio?: string;
   creatorCategoryId?: string;
   creatorCategory?: CreatorCategory;
   socialLinks?: Record<string, string>;
+  isOnboarded: boolean;
 }

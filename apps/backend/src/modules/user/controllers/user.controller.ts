@@ -4,6 +4,8 @@ import { getProfile as fetchProfile } from '../services/get-profile.service';
 import { updateProfile as editProfile } from '../services/update-profile.service';
 import { getCategories as fetchCategories } from '../services/get-categories.service';
 import { updateProfileSchema } from '../dto/user.dto';
+import { storageService } from '../../../lib/storage';
+import { prisma } from '../../../lib/prisma';
 
 // req.user is set by the requireAuth middleware
 export const getProfile = asyncHandler(async (req: Request, res: Response) => {
@@ -22,6 +24,22 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   const userId = (req as any).user.id;
   
   const data = updateProfileSchema.parse(req.body);
+  
+  if (req.file) {
+    const imageUrl = await storageService.uploadFile(req.file, 'avatars');
+    data.image = imageUrl;
+  }
+  
+  if (data.username) {
+    const existingUser = await prisma.user.findFirst({
+      where: { username: data.username, id: { not: userId } }
+    });
+    if (existingUser) {
+      res.status(400);
+      throw new Error('Username is already taken');
+    }
+  }
+
   const profile = await editProfile(userId, data);
   
   res.json(profile);

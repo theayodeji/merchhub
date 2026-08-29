@@ -29,4 +29,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-
+.skills
+.agents
+.windsurf
+.claude

@@ -6,7 +6,7 @@ interface AuthSidebarProps {
 
 export function AuthSidebar({ title, subtitle, imageSrc }: AuthSidebarProps) {
   return (
-    <div className="hidden md:flex flex-col justify-end bg-gray-100 p-12 overflow-hidden sticky top-0 h-screen relative">
+    <div className="hidden md:flex flex-col justify-end bg-gray-100 p-12 overflow-hidden sticky top-0 h-screen">
       
       {/* Full Cover Background Image */}
       <img 
