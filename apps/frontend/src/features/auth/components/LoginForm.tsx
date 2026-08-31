@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Input } from '@merchhub/ui';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
 import { useLogin } from '../hooks/useLogin';
 

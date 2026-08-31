@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Button, Input, Textarea } from '@merchhub/ui';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useProfileCategories, useUpdateProfile } from '../hooks/useProfile';
 import { ArrowRight, Upload } from 'lucide-react';
 

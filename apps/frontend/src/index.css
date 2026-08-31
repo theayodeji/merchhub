@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@source "../../../packages/ui";
 @theme {
   /* Proper Shadcn Semantic Color Palette */
   --color-background: var(--background);

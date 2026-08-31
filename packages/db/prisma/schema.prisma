@@ -37,16 +37,25 @@ model User {
 
 
 
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model Product {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   name        String
   description String
-  price       Float //in cents
+  price       Int           // in cents
+  status      ProductStatus @default(DRAFT)
   sellerId    String
-  seller      User     @relation(fields: [sellerId], references: [id])
+  seller      User          @relation(fields: [sellerId], references: [id])
   images      String[]
   stock       Int
-  createdAt   DateTime @default(now())
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   orders     Order[]
   category   Category? @relation(fields: [categoryId], references: [id])

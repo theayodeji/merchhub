@@ -1,4 +1,4 @@
-import { Button } from '@merchhub/ui';
+import { Button } from '@/components/ui/button';
 import { PackagePlus } from 'lucide-react';
 
 export const StorefrontStatus = () => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { queryClient } from '../lib/react-query';
-import { Toaster } from '@merchhub/ui';
+import { Toaster } from '@/components/ui/toaster';
 
 type AppProviderProps = {
   children: React.ReactNode;

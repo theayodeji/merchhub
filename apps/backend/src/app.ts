@@ -9,6 +9,8 @@ import { toNodeHandler } from 'better-auth/node';
 import { auth } from './config/auth';
 import { userRouter } from './modules/user/routes';
 import { productRouter } from './modules/product/routes';
+import { storefrontRouter } from './modules/storefront/routes';
+import { orderRouter } from './modules/order/routes';
 
 const app = express();
 
@@ -33,6 +35,8 @@ app.use(morgan('combined', {
 // Setup modules (routes) here...
 app.use('/api/users', userRouter);
 app.use('/api/products', productRouter);
+app.use('/api/storefront', storefrontRouter);
+app.use('/api/orders', orderRouter);
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // Global error handler

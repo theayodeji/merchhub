@@ -45,20 +45,25 @@ export class S3StorageService implements IStorageService {
 
     await this.client.send(command);
     
-    // Return the public URL
-    return `${this.publicUrl}/${fileName}`;
+    // Return just the path/key to store in the database
+    return fileName;
   }
 
-  async deleteFile(fileUrl: string): Promise<void> {
-    if (!fileUrl.startsWith(this.publicUrl)) return;
-    
-    const key = fileUrl.replace(`${this.publicUrl}/`, '');
-    
+  async deleteFile(fileKey: string): Promise<void> {
+    // If someone accidentally passes a full URL, try to extract the key
+    const key = fileKey.startsWith(this.publicUrl) 
+      ? fileKey.replace(`${this.publicUrl}/`, '') 
+      : fileKey;
+      
     const command = new DeleteObjectCommand({
       Bucket: this.bucketName,
       Key: key,
     });
 
     await this.client.send(command);
+  }
+  
+  getFileUrl(fileKey: string): string {
+    return `${this.publicUrl}/${fileKey}`;
   }
 }

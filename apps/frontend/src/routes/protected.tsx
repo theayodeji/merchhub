@@ -7,7 +7,9 @@ import { CreatorDashboardLayout } from '../components/layout/CreatorDashboardLay
 const DashboardHome = React.lazy(() => import('../pages/Dashboard/DashboardHome'));
 const Onboarding = React.lazy(() => import('../pages/Onboarding/Onboarding'));
 const Settings = React.lazy(() => import('../pages/Dashboard/Settings'));
-
+const Products = React.lazy(() => import('../pages/Dashboard/Products'));
+const NewProduct = React.lazy(() => import('../pages/Dashboard/NewProduct'));
+const EditProduct = React.lazy(() => import('../pages/Dashboard/EditProduct'));
 export const protectedRoutes: RouteObject[] = [
   {
     path: paths.app.dashboard.path,
@@ -24,6 +26,18 @@ export const protectedRoutes: RouteObject[] = [
       {
         path: 'dashboard/settings',
         element: <Settings />,
+      },
+      {
+        path: 'dashboard/products',
+        element: <Products />,
+      },
+      {
+        path: 'dashboard/products/new',
+        element: <NewProduct />,
+      },
+      {
+        path: 'dashboard/products/:id/edit',
+        element: <EditProduct />,
       },
     ],
   },

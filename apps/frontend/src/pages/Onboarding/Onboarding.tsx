@@ -4,13 +4,13 @@ import { RoleSelection } from '../../features/profile/components/RoleSelection';
 import { useOnboarding } from '../../features/profile/hooks/useOnboarding';
 
 export default function Onboarding() {
-  const { role, setRole } = useOnboarding();
+  const { role, setRole, isSubmittingCustomer } = useOnboarding();
 
   return (
     <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
       {/* Form Section */}
       <div className="flex h-full w-full bg-white">
-        {role === 'none' && <RoleSelection onSelect={setRole} />}
+        {role === 'none' && <RoleSelection onSelect={setRole} isLoadingCustomer={isSubmittingCustomer} />}
         {role === 'creator' && <ProfileForm />}
       </div>
       

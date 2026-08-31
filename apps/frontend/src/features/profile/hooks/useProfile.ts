@@ -3,7 +3,7 @@ import { fetchCategories, updateProfile, fetchProfile, type UpdateProfileData } 
 import { useNavigate } from 'react-router-dom';
 import { paths } from '../../../config/paths';
 
-import { useToast } from '@merchhub/ui';
+import { useToast } from '@/components/ui/use-toast';
 
 export const useProfileCategories = () => {
   return useQuery({
@@ -31,8 +31,8 @@ export const useUpdateProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-profile'] });
       toast({
-        title: "Profile Setup Complete",
-        description: "Your storefront is ready! Welcome to your dashboard.",
+        title: "Profile Update Complete",
+        description: "Details Updated successfully.",
       });
       navigate(paths.app.dashboard.getHref());
     },

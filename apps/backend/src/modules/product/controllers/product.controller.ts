@@ -1,19 +1,162 @@
-import { Request, Response } from 'express';
-import asyncHandler from 'express-async-handler';
-import { createProductSchema } from '../dto/product.dto';
-import { createProduct as create, getProductsBySeller as getBySeller } from '../services/product.service';
+import { Request, Response } from "express";
+import asyncHandler from "express-async-handler";
+import { prisma } from '../../../lib/prisma';
+import { createProductSchema, updateProductSchema } from "../dto/product.dto";
+import * as productService from "../services/product.service";
+import { storageService } from "../../../lib/storage";
 
-export const createProduct = asyncHandler(async (req: Request, res: Response) => {
-  const sellerId = (req as any).sellerId;
-  const data = createProductSchema.parse(req.body);
-  
-  const product = await create(sellerId, data);
-  res.status(201).json(product);
+const processImages = async (
+  files: Express.Multer.File[] | undefined,
+  existingImages: string[] = [],
+): Promise<string[]> => {
+  if (!files || files.length === 0) return existingImages;
+
+  const uploadPromises = files.map((file) =>
+    storageService.uploadFile(file, "products"),
+  );
+  const newImages = await Promise.all(uploadPromises);
+
+  return [...existingImages, ...newImages];
+};
+
+const formatProductUrls = (product: any) => {
+  if (product && product.images && Array.isArray(product.images)) {
+    product.images = product.images.map((img: string) =>
+      img.startsWith("http") ? img : storageService.getFileUrl(img),
+    );
+  }
+  return product;
+};
+
+export const createProduct = asyncHandler(
+  async (req: Request, res: Response) => {
+    const sellerId = (req as any).user.id;
+    const data = createProductSchema.parse(req.body);
+
+    // Handle multiple images upload
+    const files = req.files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      res.status(400);
+      throw new Error("At least one product image is required");
+    }
+
+    data.images = await processImages(files);
+
+    const product = await productService.createProduct(sellerId, data);
+    res.status(201).json(formatProductUrls(product));
+  },
+);
+
+export const getProductCategories = asyncHandler(
+  async (req: Request, res: Response) => {
+    console.log("--> getProductCategories called");
+    const categories = await productService.getCategories();
+    res.json(categories);
+  },
+);
+
+export const getMyProducts = asyncHandler(
+  async (req: Request, res: Response) => {
+    const sellerId = (req as any).user.id;
+    const products = await productService.getProductsBySeller(sellerId);
+
+    res.json(products.map(formatProductUrls));
+  },
+);
+
+export const getProduct = asyncHandler(async (req: Request, res: Response) => {
+  const sellerId = (req as any).user.id;
+  const product = await productService.getProductById(
+    req.params.id as string,
+    sellerId,
+  );
+
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+
+  res.json(formatProductUrls(product));
 });
 
-export const getMyProducts = asyncHandler(async (req: Request, res: Response) => {
-  const sellerId = (req as any).sellerId;
-  
-  const products = await getBySeller(sellerId);
-  res.json(products);
-});
+export const updateProduct = asyncHandler(
+  async (req: Request, res: Response) => {
+    const sellerId = (req as any).user.id;
+
+    const existingProduct = await productService.getProductById(
+      req.params.id as string,
+      sellerId,
+    );
+    if (!existingProduct) {
+      res.status(404);
+      throw new Error("Product not found");
+    }
+
+    const data = updateProductSchema.parse(req.body);
+
+    // Handle images if any were uploaded
+    const files = req.files as Express.Multer.File[];
+
+    // Parse existing images that are kept (sent as strings/array from frontend)
+    // Usually frontends send existing image paths back. If they don't, we need to handle deletions.
+    let keptImages: string[] = [];
+    if (req.body.existingImages) {
+      try {
+        const parsed = JSON.parse(req.body.existingImages);
+        if (Array.isArray(parsed)) {
+          // Extract just the relative paths from the full URLs
+          keptImages = parsed.map((url) => {
+            if (!url.startsWith("http")) return url;
+            const urlObj = new URL(url);
+            return urlObj.pathname.replace(/^\/+/, ""); // try to extract the key
+          });
+        }
+      } catch (e) {
+        console.error("Failed to parse existingImages", e);
+      }
+    } else {
+      keptImages = existingProduct.images;
+    }
+
+    data.images = await processImages(files, keptImages);
+
+    // Find deleted images to remove from storage (optional but good for cleanup)
+    const deletedImages = existingProduct.images.filter(
+      (img) => !data.images?.includes(img),
+    );
+    for (const img of deletedImages) {
+      await storageService.deleteFile(img).catch(console.error);
+    }
+
+    const updatedProduct = await productService.updateProduct(
+      req.params.id as string,
+      sellerId,
+      data,
+    );
+    res.json(formatProductUrls(updatedProduct));
+  },
+);
+
+export const deleteProduct = asyncHandler(
+  async (req: Request, res: Response) => {
+    const sellerId = (req as any).user.id;
+
+    const existingProduct = await productService.getProductById(
+      req.params.id as string,
+      sellerId,
+    );
+    if (!existingProduct) {
+      res.status(404);
+      throw new Error("Product not found");
+    }
+
+    await productService.deleteProduct(req.params.id as string, sellerId);
+
+    // Delete all associated images
+    for (const img of existingProduct.images) {
+      await storageService.deleteFile(img).catch(console.error);
+    }
+
+    res.json({ success: true, message: "Product deleted" });
+  },
+);

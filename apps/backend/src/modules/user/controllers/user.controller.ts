@@ -17,6 +17,10 @@ export const getProfile = asyncHandler(async (req: Request, res: Response) => {
     throw new Error('Profile not found');
   }
   
+  if (profile.image && !profile.image.startsWith('http')) {
+    profile.image = storageService.getFileUrl(profile.image);
+  }
+  
   res.json(profile);
 });
 
@@ -26,8 +30,9 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   const data = updateProfileSchema.parse(req.body);
   
   if (req.file) {
-    const imageUrl = await storageService.uploadFile(req.file, 'avatars');
-    data.image = imageUrl;
+    // Only storing path/key in database
+    const imagePath = await storageService.uploadFile(req.file, 'avatars');
+    data.image = imagePath;
   }
   
   if (data.username) {
@@ -41,6 +46,10 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   }
 
   const profile = await editProfile(userId, data);
+  
+  if (profile.image && !profile.image.startsWith('http')) {
+    profile.image = storageService.getFileUrl(profile.image);
+  }
   
   res.json(profile);
 });
