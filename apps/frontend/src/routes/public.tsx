@@ -7,6 +7,8 @@ import { ProductDetailsPage } from '../pages/public/ProductDetailsPage';
 import { MockPaymentGatewayPage } from '../pages/public/MockPaymentGatewayPage';
 import { OrderSuccessPage } from '../pages/public/OrderSuccessPage';
 
+import { PublicLayout } from '../components/layout/PublicLayout';
+
 const Login = React.lazy(() => import('../pages/Auth/Login'));
 const Signup = React.lazy(() => import('../pages/Auth/Signup'));
 
@@ -20,23 +22,28 @@ export const publicRoutes: RouteObject[] = [
     element: <Signup />,
   },
   {
-    path: '/',
-    element: <MarketplacePage />,
-  },
-  {
-    path: '/:username',
-    element: <CreatorStorefrontPage />,
-  },
-  {
-    path: '/product/:id',
-    element: <ProductDetailsPage />,
-  },
-  {
-    path: '/payment/mock',
-    element: <MockPaymentGatewayPage />,
-  },
-  {
-    path: '/order-success',
-    element: <OrderSuccessPage />,
+    element: <PublicLayout />,
+    children: [
+      {
+        path: '/',
+        element: <MarketplacePage />,
+      },
+      {
+        path: '/:username',
+        element: <CreatorStorefrontPage />,
+      },
+      {
+        path: '/product/:id',
+        element: <ProductDetailsPage />,
+      },
+      {
+        path: '/payment/mock',
+        element: <MockPaymentGatewayPage />,
+      },
+      {
+        path: '/order-success',
+        element: <OrderSuccessPage />,
+      }
+    ]
   }
 ];

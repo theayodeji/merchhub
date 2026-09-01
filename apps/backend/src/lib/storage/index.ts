@@ -1,5 +1,6 @@
 import { IStorageService } from './StorageService.interface';
 import { S3StorageService } from './S3StorageService';
+import { AppError } from '../../errors/AppError';
 
 let storageService: IStorageService;
 
@@ -27,7 +28,7 @@ if (provider === 'r2') {
   // } else if (provider === 'cloudinary') {
   //   storageService = new CloudinaryStorageService({...})
   // }
-  throw new Error(`Unsupported STORAGE_PROVIDER: ${provider}. Check your .env file.`);
+  throw new AppError(`Unsupported STORAGE_PROVIDER: ${provider}. Check your .env file.`, 500);
 }
 
 export { storageService };

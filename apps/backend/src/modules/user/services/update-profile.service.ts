@@ -11,6 +11,7 @@ export const updateProfile = async (userId: string, data: UpdateProfileDto) => {
       displayUsername: data.displayUsername,
       socialLinks: data.socialLinks ?? undefined,
       image: data.image || undefined,
+      role: data.role || undefined,
       isOnboarded: true
     },
   });

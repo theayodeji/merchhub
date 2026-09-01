@@ -44,4 +44,7 @@ export const apiClient = {
 
   delete: <T>(endpoint: string, options?: ApiRequestOptions) =>
     request<T>(endpoint, { ...options, method: 'DELETE' }),
+
+  patch: <T>(endpoint: string, body: Record<string, unknown>, options?: ApiRequestOptions) =>
+    request<T>(endpoint, { ...options, method: 'PATCH', body }),
 };

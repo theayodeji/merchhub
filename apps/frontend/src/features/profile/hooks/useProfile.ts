@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchCategories, updateProfile, fetchProfile, type UpdateProfileData } from '../api/user-api';
-import { useNavigate } from 'react-router-dom';
 import { paths } from '../../../config/paths';
 
 import { useToast } from '@/components/ui/use-toast';
@@ -23,7 +22,6 @@ export const useProfile = (enabled: boolean = true) => {
 
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   return useMutation({
@@ -34,7 +32,8 @@ export const useUpdateProfile = () => {
         title: "Profile Update Complete",
         description: "Details Updated successfully.",
       });
-      navigate(paths.app.dashboard.getHref());
+      // Force full reload to resync session role globally
+      window.location.href = paths.app.dashboard.getHref();
     },
     onError: (error: any) => {
       toast({

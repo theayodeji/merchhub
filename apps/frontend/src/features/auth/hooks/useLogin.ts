@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { authClient } from '../../../lib/auth-client';
 import { paths } from '../../../config/paths';
 
 export const useLogin = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || paths.app.dashboard.getHref();
   
@@ -34,7 +33,7 @@ export const useLogin = () => {
       if (error) {
         setError(error.message || 'Login failed');
       } else {
-        navigate(redirectTo);
+        window.location.href = redirectTo;
       }
     } catch (err: any) {
       setError('An unexpected error occurred');

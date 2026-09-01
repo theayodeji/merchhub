@@ -16,6 +16,7 @@ export const updateProfileSchema = z.object({
     return val;
   }, z.record(z.string(), z.string().url("Must be a valid URL")).optional()),
   image: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  role: z.enum(['CUSTOMER', 'CREATOR']).optional(),
 });
 
 export type UpdateProfileDto = z.infer<typeof updateProfileSchema>;

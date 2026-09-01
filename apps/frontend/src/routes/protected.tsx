@@ -24,19 +24,19 @@ export const protectedRoutes: RouteObject[] = [
         element: <DashboardHome />,
       },
       {
-        path: 'dashboard/settings',
+        path: 'settings',
         element: <Settings />,
       },
       {
-        path: 'dashboard/products',
+        path: 'products',
         element: <Products />,
       },
       {
-        path: 'dashboard/products/new',
+        path: 'products/new',
         element: <NewProduct />,
       },
       {
-        path: 'dashboard/products/:id/edit',
+        path: 'products/:id/edit',
         element: <EditProduct />,
       },
     ],

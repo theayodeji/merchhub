@@ -12,9 +12,13 @@ export const paths = {
     },
   },
   app: {
-    dashboard: {
+    home: {
       path: '/',
       getHref: () => '/',
+    },
+    dashboard: {
+      path: '/dashboard',
+      getHref: () => '/dashboard',
     },
     onboarding: {
       path: '/onboarding',

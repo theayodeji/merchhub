@@ -1,5 +1,6 @@
 import { IPaymentService } from './PaymentService.interface';
 import { MockPaymentProvider } from './MockPaymentProvider';
+import { AppError } from '../../errors/AppError';
 
 let paymentService: IPaymentService;
 
@@ -9,12 +10,12 @@ if (provider === 'mock') {
   paymentService = new MockPaymentProvider();
 } else if (provider === 'paystack') {
   // paymentService = new PaystackPaymentService(process.env.PAYSTACK_SECRET_KEY);
-  throw new Error('Paystack provider not yet fully implemented.');
+  throw new AppError('Paystack provider not yet fully implemented.', 501);
 } else if (provider === 'stripe') {
   // paymentService = new StripePaymentService(process.env.STRIPE_SECRET_KEY);
-  throw new Error('Stripe provider not yet fully implemented.');
+  throw new AppError('Stripe provider not yet fully implemented.', 501);
 } else {
-  throw new Error(`Unsupported PAYMENT_PROVIDER: ${provider}. Check your .env file.`);
+  throw new AppError(`Unsupported PAYMENT_PROVIDER: ${provider}. Check your .env file.`, 500);
 }
 
 export { paymentService };

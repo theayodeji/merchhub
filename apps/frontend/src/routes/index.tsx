@@ -8,7 +8,7 @@ export const AppRoutes = () => {
   const element = useRoutes([
     ...publicRoutes, 
     ...protectedRoutes,
-    { path: '*', element: <Navigate to={paths.app.dashboard.getHref()} replace /> }
+    { path: '*', element: <Navigate to={paths.app.home.path} replace /> }
   ]);
   
   return <>{element}</>;

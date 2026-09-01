@@ -1,4 +1,5 @@
 import { IPaymentService, PaymentInitializeParams, PaymentInitializeResponse, PaymentVerifyResponse } from './PaymentService.interface';
+import { NotFoundError } from '../../errors/AppError';
 import crypto from 'crypto';
 
 /**
@@ -24,7 +25,7 @@ export class MockPaymentProvider implements IPaymentService {
     const txn = this.mockTransactions.get(reference);
 
     if (!txn) {
-      throw new Error(`Mock transaction not found for reference: ${reference}`);
+      throw new NotFoundError(`Mock transaction not found for reference: ${reference}`);
     }
 
     return {

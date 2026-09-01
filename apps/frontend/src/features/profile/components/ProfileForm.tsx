@@ -49,6 +49,7 @@ export const ProfileForm = () => {
       bio: formData.bio,
       creatorCategoryId: formData.creatorCategoryId,
       socialLinks,
+      role: 'CREATOR',
     };
     
     if (avatarFile) {

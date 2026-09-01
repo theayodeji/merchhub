@@ -1,24 +1,33 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { paths } from '../../../config/paths';
-import { useUpdateProfile } from './useProfile';
+import { apiClient } from '../../../lib/api-client';
 
 type OnboardingRole = 'none' | 'creator' | 'customer';
 
 export const useOnboarding = () => {
-  const [role, setRole] = useState<OnboardingRole>('none');
-  const navigate = useNavigate();
-  const { mutate: updateProfile, isPending } = useUpdateProfile();
+  const [searchParams] = useSearchParams();
+  const initialRole = (searchParams.get('role') as OnboardingRole) || 'none';
+  const [role, setRole] = useState<OnboardingRole>(initialRole);
+  const [isSubmittingCustomer, setIsSubmittingCustomer] = useState(false);
 
-  const handleSetRole = (newRole: OnboardingRole) => {
+  const handleSetRole = async (newRole: OnboardingRole) => {
     setRole(newRole);
     if (newRole === 'customer') {
-      // For customers, we just mark onboarding as completed
-      // The backend sets isOnboarded = true inside the updateProfile service
-      // We don't need a specific role field as customers are just users without a creatorCategoryId
-      updateProfile({});
+      try {
+        setIsSubmittingCustomer(true);
+        // Explicitly set the role to CUSTOMER for standard shoppers
+        await apiClient.patch('/api/users/role', { role: 'CUSTOMER' });
+        
+        // Use full reload to sync session state across app
+        window.location.href = paths.app.home.getHref ? paths.app.home.getHref() : '/';
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsSubmittingCustomer(false);
+      }
     }
   };
 
-  return { role, setRole: handleSetRole, isSubmittingCustomer: isPending };
+  return { role, setRole: handleSetRole, isSubmittingCustomer };
 };

@@ -13,5 +13,14 @@ export const auth = betterAuth({
   plugins: [
     username()
   ],
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: true,
+        defaultValue: "CUSTOMER",
+      }
+    }
+  },
   trustedOrigins: ["http://localhost:5173"],
 });

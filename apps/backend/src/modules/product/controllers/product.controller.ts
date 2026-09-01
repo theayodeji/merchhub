@@ -4,6 +4,7 @@ import { prisma } from '../../../lib/prisma';
 import { createProductSchema, updateProductSchema } from "../dto/product.dto";
 import * as productService from "../services/product.service";
 import { storageService } from "../../../lib/storage";
+import { AppError, BadRequestError, NotFoundError } from "../../../errors/AppError";
 
 const processImages = async (
   files: Express.Multer.File[] | undefined,
@@ -36,8 +37,7 @@ export const createProduct = asyncHandler(
     // Handle multiple images upload
     const files = req.files as Express.Multer.File[];
     if (!files || files.length === 0) {
-      res.status(400);
-      throw new Error("At least one product image is required");
+      throw new BadRequestError("At least one product image is required");
     }
 
     data.images = await processImages(files);
@@ -72,8 +72,7 @@ export const getProduct = asyncHandler(async (req: Request, res: Response) => {
   );
 
   if (!product) {
-    res.status(404);
-    throw new Error("Product not found");
+    throw new NotFoundError("Product not found");
   }
 
   res.json(formatProductUrls(product));
@@ -88,8 +87,7 @@ export const updateProduct = asyncHandler(
       sellerId,
     );
     if (!existingProduct) {
-      res.status(404);
-      throw new Error("Product not found");
+      throw new NotFoundError("Product not found");
     }
 
     const data = updateProductSchema.parse(req.body);
@@ -146,8 +144,7 @@ export const deleteProduct = asyncHandler(
       sellerId,
     );
     if (!existingProduct) {
-      res.status(404);
-      throw new Error("Product not found");
+      throw new NotFoundError("Product not found");
     }
 
     await productService.deleteProduct(req.params.id as string, sellerId);

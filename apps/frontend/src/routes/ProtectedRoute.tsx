@@ -28,15 +28,27 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   const isOnboardingRoute = location.pathname === paths.app.onboarding.path;
+  const searchParams = new URLSearchParams(location.search);
+  const isUpgradingToCreator = isOnboardingRoute && searchParams.get('role') === 'creator' && !profile?.creatorCategoryId;
 
   // Redirect to onboarding if not onboarded
   if (profile && !profile.isOnboarded && !isOnboardingRoute) {
     return <Navigate to={paths.app.onboarding.path} replace />;
   }
 
-  // Redirect away from onboarding if already onboarded
-  if (profile && profile.isOnboarded && isOnboardingRoute) {
-    return <Navigate to={paths.app.dashboard.path} replace />;
+  // Redirect away from onboarding if already onboarded, UNLESS they are upgrading to creator
+  if (profile && profile.isOnboarded && isOnboardingRoute && !isUpgradingToCreator) {
+    const role = session.user?.role;
+    if (role === 'CREATOR') {
+      return <Navigate to={paths.app.dashboard.path} replace />;
+    }
+    return <Navigate to={paths.app.home.path} replace />;
+  }
+
+  // Prevent CUSTOMER from accessing dashboard routes
+  const role = session.user?.role;
+  if (location.pathname.startsWith(paths.app.dashboard.path) && role !== 'CREATOR') {
+    return <Navigate to={paths.app.home.path} replace />;
   }
   
   // If profile is missing completely (e.g. error fetching) and they are not on onboarding, send them there as fallback
