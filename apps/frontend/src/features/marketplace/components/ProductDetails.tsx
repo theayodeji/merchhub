@@ -19,9 +19,13 @@ export const ProductDetails = ({
   const [activeImage, setActiveImage] = useState(0);
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
-  const { isInWishlist, addItem: addWishlist, removeItem: removeWishlist } = useWishlistStore();
+  const {
+    isInWishlist,
+    addItem: addWishlist,
+    removeItem: removeWishlist,
+  } = useWishlistStore();
   const { toast } = useToast();
-  
+
   const isLiked = isInWishlist(product.id);
 
   const toggleWishlist = () => {
@@ -32,7 +36,7 @@ export const ProductDetails = ({
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.images?.[0]
+        image: product.images?.[0],
       });
       toast({
         title: "Added to Wishlist",
@@ -149,7 +153,7 @@ export const ProductDetails = ({
           <div className="space-y-8">
             {/* Product Details */}
             <div>
-              <h3 className="text-xs font-bold text-black uppercase tracking-wider">
+              <h3 className="text-sm  mb-2 font-bold text-black uppercase tracking-wider">
                 Product Details
               </h3>
               <div className="relative">

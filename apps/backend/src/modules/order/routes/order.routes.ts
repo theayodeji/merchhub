@@ -11,6 +11,7 @@ router.post('/', validateRequest(createOrderSchema), orderController.placeOrder)
 
 // Protected creator routes
 router.get('/creator', requireCreator, orderController.getCreatorOrders);
+router.get('/creator/:id', requireCreator, orderController.getCreatorOrder);
 router.patch('/creator/:id/status', requireCreator, orderController.updateOrderStatus);
 
 export default router;

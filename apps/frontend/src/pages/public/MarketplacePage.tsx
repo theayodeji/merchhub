@@ -65,7 +65,10 @@ export const MarketplacePage = () => {
               </Link>
             </li>
             <li>
-              <Link to="#" className="text-red-500 hover:text-red-600 transition-colors">
+              <Link
+                to="#"
+                className="text-red-500 hover:text-red-600 transition-colors"
+              >
                 Hot Offers
               </Link>
             </li>
@@ -91,17 +94,10 @@ export const MarketplacePage = () => {
               worldwide.
             </p>
             <div className="flex flex-wrap items-center gap-4">
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 font-semibold"
-              >
+              <Button size="lg" className="cursor-pointer">
                 Shop Now <ArrowRight className="ml-2 size-4" />
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-full px-8 text-neutral-800 bg-white hover:bg-neutral-100 font-semibold border-none"
-              >
+              <Button size="lg" variant="secondary" className="cursor-pointer">
                 Explore Collections
               </Button>
             </div>

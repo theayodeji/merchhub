@@ -35,7 +35,7 @@ export const DashboardCharts = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
       {/* Revenue Line Chart */}
-      <div className="bg-white p-6 rounded-md border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="bg-white p-4 md:p-6 rounded-md border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900">
             Revenue Over Time
@@ -83,10 +83,10 @@ export const DashboardCharts = ({
               <Line
                 type="monotone"
                 dataKey="revenue"
-                stroke="#000000"
+                stroke="#FF3333"
                 strokeWidth={3}
-                dot={{ r: 4, fill: "#000000", strokeWidth: 0 }}
-                activeDot={{ r: 6, fill: "#000000", strokeWidth: 0 }}
+                dot={{ r: 4, fill: "#FF3333", strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: "#FF3333", strokeWidth: 0 }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -94,7 +94,7 @@ export const DashboardCharts = ({
       </div>
 
       {/* Orders Status Bar Chart */}
-      <div className="bg-white p-6 rounded-md border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="bg-white p-4 md:p-6 rounded-md border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-gray-900">
             Orders by Status
@@ -136,7 +136,7 @@ export const DashboardCharts = ({
                 }}
                 cursor={{ fill: "#f9fafb" }}
               />
-              <Bar dataKey="count" fill="#000000" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill="#FF3333" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

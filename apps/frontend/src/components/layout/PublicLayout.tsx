@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { PublicNavbar } from "./PublicNavbar";
+import { Footer } from "./Footer";
 
 export const PublicLayout = () => {
 
@@ -12,12 +13,7 @@ export const PublicLayout = () => {
         <Outlet />
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white py-12 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} MerchHub. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

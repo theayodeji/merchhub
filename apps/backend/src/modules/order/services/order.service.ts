@@ -121,6 +121,31 @@ export const findOrdersBySellerId = async (sellerId: string) => {
   });
 };
 
+export const findOrderByIdAndSellerId = async (orderId: string, sellerId: string) => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId, sellerId },
+    include: {
+      items: {
+        include: {
+          product: {
+            select: {
+              name: true,
+              images: true
+            }
+          }
+        }
+      },
+      transaction: true
+    }
+  });
+
+  if (!order) {
+    throw new NotFoundError('Order not found');
+  }
+
+  return order;
+};
+
 export const changeOrderStatus = async (orderId: string, sellerId: string, status: OrderStatus) => {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   

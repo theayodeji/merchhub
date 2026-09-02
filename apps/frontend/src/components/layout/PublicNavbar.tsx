@@ -8,11 +8,15 @@ import { paths } from "../../config/paths";
 import { CartModal } from "../../features/marketplace/components/CartModal";
 import { WishlistModal } from "../../features/marketplace/components/WishlistModal";
 import { useCartStore } from "../../store/useCartStore";
+import { useWishlistStore } from "../../store/useWishlistStore";
 
 export const PublicNavbar = () => {
   const { data: session } = authClient.useSession();
   const isAuthenticated = !!session?.user;
   const isCreator = session?.user?.role === "CREATOR";
+
+  const clearCart = useCartStore((state) => state.clearCart);
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -29,8 +33,6 @@ export const PublicNavbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#0a0a0a] text-white shadow-md">
@@ -92,8 +94,16 @@ export const PublicNavbar = () => {
 
               {isDropdownOpen && (
                 <div className="absolute right-0 top-full mt-4 w-48 rounded-xl bg-[#1a1a1a] border border-neutral-800 shadow-xl p-1.5 z-50">
-                  <div className="px-3 py-2 text-[10px] font-bold text-neutral-500 uppercase tracking-wider">
-                    My Account
+                  <div className="px-3 py-2 flex flex-col gap-1">
+                    <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">
+                      My Account
+                    </div>
+                    <div className="text-sm font-medium text-white truncate">
+                      {session?.user?.name}
+                    </div>
+                    <div className="text-xs text-neutral-400 truncate">
+                      {session?.user?.email}
+                    </div>
                   </div>
                   <div className="h-px bg-neutral-800 my-1 mx-1" />
                   <Link
@@ -108,6 +118,8 @@ export const PublicNavbar = () => {
                   <button
                     onClick={() => {
                       setIsDropdownOpen(false);
+                      clearCart();
+                      clearWishlist();
                       authClient.signOut({});
                     }}
                     className="w-full text-left block px-3 py-2 text-sm text-[#FF3333] hover:text-[#ff4d4d] hover:bg-neutral-800 transition-colors rounded-md"

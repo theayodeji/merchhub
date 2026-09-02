@@ -10,6 +10,7 @@ const router = Router();
 
 
 router.get('/categories', productController.getProductCategories);
+router.get('/public', productController.getAllProducts);
 
 // All product routes require a logged-in user who is a creator
 router.use(requireAuth, requireCreator);

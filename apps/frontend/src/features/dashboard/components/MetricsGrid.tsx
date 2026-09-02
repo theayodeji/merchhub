@@ -7,13 +7,22 @@ interface MetricCardProps {
   bgColor: string;
 }
 
-const MetricCard = ({ icon, label, value, bgColor }: MetricCardProps) => (
-  <div className="bg-white rounded-md p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all">
-    <div className={`size-12 rounded-md ${bgColor} flex items-center justify-center mb-6`}>
-      {icon}
+const MetricCard = ({ icon, label, value }: MetricCardProps) => (
+  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
+    <div className="flex items-center justify-between mb-4">
+      <p className="text-sm font-bold text-gray-700">{label}</p>
+      <div className="text-[#FF3333]">
+        {icon}
+      </div>
     </div>
-    <p className="text-sm font-semibold text-gray-500 mb-1">{label}</p>
-    <p className="text-4xl font-bold text-gray-900">{value}</p>
+    <div className="flex items-end gap-3 mb-1">
+      <p className="text-3xl font-bold text-gray-900 leading-none">{value}</p>
+      <span className="inline-flex items-center rounded bg-green-50 px-1.5 py-0.5 text-xs font-semibold text-green-700 mb-0.5">
+        <TrendingUp className="mr-1 size-3" />
+        15.5%
+      </span>
+    </div>
+    <p className="text-xs text-gray-400">vs. last period</p>
   </div>
 );
 
@@ -40,22 +49,22 @@ export const MetricsGrid = ({ metrics, isLoading }: MetricsGridProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <MetricCard
-        icon={<TrendingUp className="size-6" />}
+        icon={<TrendingUp className="size-5" />}
         label="Total Revenue"
         value={`$${(metrics.totalRevenue / 100).toFixed(2)}`}
-        bgColor="bg-green-50 text-green-600"
+        bgColor=""
       />
       <MetricCard
-        icon={<ShoppingBag className="size-6" />}
+        icon={<ShoppingBag className="size-5" />}
         label="Active Orders"
         value={metrics.activeOrdersCount.toString()}
-        bgColor="bg-blue-50 text-blue-600"
+        bgColor=""
       />
       <MetricCard
-        icon={<PackageOpen className="size-6" />}
+        icon={<PackageOpen className="size-5" />}
         label="Live Products"
         value={metrics.liveProductsCount.toString()}
-        bgColor="bg-purple-50 text-purple-600"
+        bgColor=""
       />
     </div>
   );

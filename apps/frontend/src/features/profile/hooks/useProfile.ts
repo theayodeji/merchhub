@@ -31,6 +31,7 @@ export const useUpdateProfile = () => {
       toast({
         title: "Profile Update Complete",
         description: "Details Updated successfully.",
+        variant: "success",
       });
       // Force full reload to resync session role globally
       window.location.href = paths.app.dashboard.getHref();

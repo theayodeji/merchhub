@@ -40,6 +40,17 @@ export const useCreatorOrders = () => {
   });
 };
 
+export const useCreatorOrder = (orderId: string) => {
+  return useQuery({
+    queryKey: ['creatorOrder', orderId],
+    queryFn: async (): Promise<CreatorOrder> => {
+      const response = await apiClient.get<{ status: string; data: CreatorOrder }>(`/api/orders/creator/${orderId}`);
+      return response.data;
+    },
+    enabled: !!orderId,
+  });
+};
+
 export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -54,6 +65,7 @@ export const useUpdateOrderStatus = () => {
       toast({
         title: 'Status Updated',
         description: 'The order status has been updated successfully.',
+        variant: 'success',
       });
     },
     onError: (error: any) => {

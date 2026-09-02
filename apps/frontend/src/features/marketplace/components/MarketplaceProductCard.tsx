@@ -35,7 +35,7 @@ export const MarketplaceProductCard = ({
   const hasMultipleImages = images.length > 1;
 
   return (
-    <div className="cursor-pointer group flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-lg">
+    <div className="cursor-pointer group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-lg h-full">
       {/* Image Section */}
       <Link
         to={`/product/${product.id}`}
@@ -43,7 +43,7 @@ export const MarketplaceProductCard = ({
       >
         {/* Creator avatar in top-left */}
         {product.seller?.image && (
-          <div className="absolute top-6 left-6 z-10 size-10 overflow-hidden rounded-full border-2 border-white bg-white shadow-sm">
+          <div className="absolute top-4 left-4 z-10 size-8 overflow-hidden rounded-full border-2 border-white bg-white shadow-sm">
             <img
               src={product.seller.image}
               alt={product.seller.username}
@@ -58,7 +58,7 @@ export const MarketplaceProductCard = ({
             <img
               src={images[activeImage]}
               alt={product.name}
-              className="rounded-3xl max-h-full max-w-full object-contain"
+              className="rounded-2xl max-h-full max-w-full object-contain"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
@@ -88,11 +88,11 @@ export const MarketplaceProductCard = ({
       </Link>
 
       {/* Details Section */}
-      <div className="flex flex-1 flex-col px-3 pb-5 pt-3">
+      <div className="flex flex-1 flex-col px-3 pb-4 pt-2">
         {/* Badge + Heart Row */}
         <div className="mb-2 flex items-center justify-between">
           {product.category?.name ? (
-            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
               {product.category.name}
             </span>
           ) : (
@@ -110,7 +110,7 @@ export const MarketplaceProductCard = ({
 
         {/* Product Name */}
         <Link to={`/product/${product.id}`}>
-          <h3 className="line-clamp-2 text-base font-semibold text-gray-900 transition-colors group-hover:text-primary">
+          <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 transition-colors group-hover:text-primary">
             {product.name}
           </h3>
         </Link>
@@ -129,17 +129,13 @@ export const MarketplaceProductCard = ({
         {/* Price + Add to Cart */}
         <div className="mt-auto flex items-end justify-between">
           <div>
-            <span className="text-xl font-semibold text-primary">
+            <span className="text-lg font-semibold text-primary">
               ${(product.price / 100).toFixed(2)}
             </span>
           </div>
-          <Button
-            size="sm"
-            className="rounded-full bg-gray-900 px-5 text-white hover:bg-gray-800"
-            asChild
-          >
-            <Link to={`/product/${product.id}`}>
-              <ShoppingCart className="mr-1.5 size-4" />
+          <Button size="sm" asChild>
+            <Link to={`/product/${product.id}`} className="text-xs">
+              <ShoppingCart className="mr-1.5 size-1" />
               Buy Now
             </Link>
           </Button>

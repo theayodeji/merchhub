@@ -4,7 +4,7 @@ interface DashboardHeroProps {
 
 export const DashboardHero = ({ creatorName }: DashboardHeroProps) => {
   return (
-    <div className="relative bg-white rounded-md p-8 md:p-12 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12">
+    <div className="relative bg-white rounded-md p-6 md:p-12 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12">
       <div className="relative z-10 max-w-xl">
         <div className="inline-block px-3 py-1 bg-red-50 text-[#FF3333] text-xs font-bold tracking-wider uppercase rounded-md mb-6">
           Storefront Active

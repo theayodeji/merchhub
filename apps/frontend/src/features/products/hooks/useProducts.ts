@@ -79,6 +79,7 @@ export const useCreateProduct = () => {
       toast({
         title: 'Product created',
         description: 'Your product has been successfully created.',
+        variant: "success",
       });
       navigate('/dashboard/products');
     },

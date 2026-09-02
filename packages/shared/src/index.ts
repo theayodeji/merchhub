@@ -13,3 +13,5 @@ export type {
 
 export * from './schemas/user.schema';
 export * from './schemas/order.schema';
+export * from './schemas/pagination';
+export * from './schemas/products';

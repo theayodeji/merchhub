@@ -1,13 +1,15 @@
 import React from 'react';
 import { type RouteObject } from 'react-router-dom';
 import { paths } from '../config/paths';
-import { MarketplacePage } from '../pages/public/MarketplacePage';
+import { Home } from '../pages/public/Home';
 import { CreatorStorefrontPage } from '../pages/public/CreatorStorefrontPage';
 import { ProductDetailsPage } from '../pages/public/ProductDetailsPage';
 import { MockPaymentGatewayPage } from '../pages/public/MockPaymentGatewayPage';
 import { OrderSuccessPage } from '../pages/public/OrderSuccessPage';
 
 import { PublicLayout } from '../components/layout/PublicLayout';
+
+import { SearchPage } from '../pages/public/SearchPage';
 
 const Login = React.lazy(() => import('../pages/Auth/Login'));
 const Signup = React.lazy(() => import('../pages/Auth/Signup'));
@@ -26,7 +28,11 @@ export const publicRoutes: RouteObject[] = [
     children: [
       {
         path: '/',
-        element: <MarketplacePage />,
+        element: <Home />,
+      },
+      {
+        path: '/search',
+        element: <SearchPage />,
       },
       {
         path: '/:username',

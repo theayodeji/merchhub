@@ -18,6 +18,7 @@ export const CopyButton = ({ value, displayText, className }: CopyButtonProps) =
       await navigator.clipboard.writeText(value);
       setCopied(true);
       toast({
+        variant: 'success',
         title: 'Copied to clipboard',
         description: `Successfully copied ${value} to your clipboard.`,
       });

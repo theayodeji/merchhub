@@ -10,7 +10,9 @@ const Settings = React.lazy(() => import('../pages/Dashboard/Settings'));
 const Products = React.lazy(() => import('../pages/Dashboard/Products'));
 const NewProduct = React.lazy(() => import('../pages/Dashboard/NewProduct'));
 const EditProduct = React.lazy(() => import('../pages/Dashboard/EditProduct'));
+const ProductDetails = React.lazy(() => import('../pages/Dashboard/ProductDetails'));
 const Orders = React.lazy(() => import('../pages/Dashboard/Orders').then(module => ({ default: module.OrdersPage })));
+const OrderDetails = React.lazy(() => import('../pages/Dashboard/OrderDetails'));
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -42,8 +44,16 @@ export const protectedRoutes: RouteObject[] = [
         element: <EditProduct />,
       },
       {
+        path: 'products/:id',
+        element: <ProductDetails />,
+      },
+      {
         path: 'orders',
         element: <Orders />,
+      },
+      {
+        path: 'orders/:id',
+        element: <OrderDetails />,
       },
     ],
   },

@@ -1,24 +1,11 @@
-import { useState } from "react";
-import {
-  useCreatorOrders,
-  useUpdateOrderStatus,
-  type OrderStatus,
-} from "../hooks/useOrders";
+import { useCreatorOrders } from "../hooks/useOrders";
 import { format } from "date-fns";
 import { CopyButton } from "@/components/ui/copy-button";
+import { useNavigate } from "react-router-dom";
 
 export const OrderList = () => {
   const { data: orders, isLoading, isError } = useCreatorOrders();
-  const updateStatusMutation = useUpdateOrderStatus();
-  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
-
-  const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
-    setUpdatingOrderId(orderId);
-    updateStatusMutation.mutate(
-      { orderId, status: newStatus },
-      { onSettled: () => setUpdatingOrderId(null) },
-    );
-  };
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -64,8 +51,12 @@ export const OrderList = () => {
         </thead>
         <tbody className="divide-y divide-gray-100">
           {orders.map((order) => (
-            <tr key={order.id} className="hover:bg-gray-50/50">
-              <td className="px-6 py-4">
+            <tr 
+              key={order.id} 
+              className="hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0 cursor-pointer group"
+              onClick={() => navigate(`/dashboard/orders/${order.id}`)}
+            >
+              <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                 <CopyButton 
                   value={order.id} 
                   displayText={`${order.id.slice(0, 8)}...`} 
@@ -115,30 +106,19 @@ export const OrderList = () => {
                 ${(order.total / 100).toFixed(2)}
               </td>
               <td className="px-6 py-4">
-                <select
-                  value={order.status}
-                  onChange={(e) =>
-                    handleStatusChange(order.id, e.target.value as OrderStatus)
-                  }
-                  disabled={updatingOrderId === order.id}
-                  className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider outline-none transition-colors ${
-                    order.status === "PENDING"
-                      ? "border-yellow-200 bg-yellow-50 text-yellow-700"
-                      : order.status === "PROCESSING"
-                        ? "border-blue-200 bg-blue-50 text-blue-700"
-                        : order.status === "SHIPPED"
-                          ? "border-purple-200 bg-purple-50 text-purple-700"
-                          : order.status === "DELIVERED"
-                            ? "border-green-200 bg-green-50 text-green-700"
-                            : "border-red-200 bg-red-50 text-red-700"
-                  } disabled:opacity-50`}
-                >
-                  <option value="PENDING">Pending</option>
-                  <option value="PROCESSING">Processing</option>
-                  <option value="SHIPPED">Shipped</option>
-                  <option value="DELIVERED">Delivered</option>
-                  <option value="CANCELLED">Cancelled</option>
-                </select>
+                <span className={`inline-flex items-center rounded-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                  order.status === "PENDING"
+                    ? "bg-gray-100 text-gray-500"
+                    : order.status === "PROCESSING"
+                      ? "bg-gray-800 text-white"
+                      : order.status === "SHIPPED"
+                        ? "bg-gray-200 text-gray-800"
+                        : order.status === "DELIVERED"
+                          ? "bg-[#FF3333] text-white"
+                          : "bg-red-50 text-red-700"
+                }`}>
+                  {order.status}
+                </span>
               </td>
             </tr>
           ))}

@@ -30,6 +30,23 @@ export const getCreatorOrders = asyncHandler(async (req: AuthenticatedRequest, r
   res.json({ status: 'success', data: formattedOrders });
 });
 
+export const getCreatorOrder = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  const sellerId = req.sellerId!;
+  const id = req.params.id;
+  const order = await orderService.findOrderByIdAndSellerId(id, sellerId);
+  
+  // Format the nested product images for the order items
+  const formattedOrder = {
+    ...order,
+    items: order.items.map(item => ({
+      ...item,
+      product: formatProductUrls(item.product)
+    }))
+  };
+
+  res.json({ status: 'success', data: formattedOrder });
+});
+
 export const updateOrderStatus = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   const sellerId = req.sellerId!;
   const id = req.params.id;

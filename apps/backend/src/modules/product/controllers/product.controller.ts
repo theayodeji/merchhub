@@ -32,6 +32,57 @@ export const getProductCategories = asyncHandler(
   },
 );
 
+import { ProductFilterSchema, PaginatedResponse } from '@merchhub/shared';
+
+export const getAllProducts = asyncHandler(async (req: Request, res: Response) => {
+  const query = ProductFilterSchema.parse(req.query);
+  const { page, limit, search, categoryId, minPrice, maxPrice } = query;
+  
+  const skip = (page - 1) * limit;
+  const take = limit;
+  
+  const where: any = {
+    status: 'PUBLISHED',
+  };
+  
+  if (categoryId) where.categoryId = categoryId;
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    where.price = {};
+    if (minPrice !== undefined) where.price.gte = minPrice;
+    if (maxPrice !== undefined) where.price.lte = maxPrice;
+  }
+  
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+  
+  const [total, products] = await prisma.$transaction([
+    prisma.product.count({ where }),
+    prisma.product.findMany({
+      where,
+      skip,
+      take,
+      orderBy: { createdAt: 'desc' },
+      include: { seller: { select: { id: true, name: true, username: true } }, category: true }
+    })
+  ]);
+  
+  const response: PaginatedResponse<any> = {
+    data: products.map(formatProductUrls),
+    meta: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
+  
+  res.json(response);
+});
+
 export const getMyProducts = asyncHandler(
   async (req: Request, res: Response) => {
     const sellerId = (req as any).user.id;
