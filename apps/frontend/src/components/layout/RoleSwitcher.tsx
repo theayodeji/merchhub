@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Store, ShoppingBag, Loader2 } from 'lucide-react';
 import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
+import { useToast } from '@/components/ui/use-toast';
 
 export const RoleSwitcher = () => {
   const { data: session } = authClient.useSession();
+  const { toast } = useToast();
   const [isSwitching, setIsSwitching] = useState(false);
 
   if (!session?.user) return null;
@@ -28,7 +30,11 @@ export const RoleSwitcher = () => {
       if (currentRole === 'CUSTOMER' && error.message?.includes('creator profile')) {
         navigate('/onboarding?role=creator');
       } else {
-        alert(error.message || 'Failed to switch mode.');
+        toast({
+          title: 'Switch Failed',
+          description: error.message || 'Failed to switch mode.',
+          variant: 'destructive',
+        });
       }
     } finally {
       setIsSwitching(false);
@@ -41,7 +47,7 @@ export const RoleSwitcher = () => {
       size="sm" 
       onClick={handleSwitchRole} 
       disabled={isSwitching}
-      className="gap-2 hidden sm:flex"
+      className="gap-2 hidden sm:flex text-black"
     >
       {isSwitching ? (
         <Loader2 className="size-4 animate-spin" />

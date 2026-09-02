@@ -39,7 +39,10 @@ export const useSignup = () => {
         password: formData.password,
         name: formData.name,
         username: formData.username,
-      });
+        role: "CUSTOMER", // default role
+        isOnboarded: false,
+        creatorCategoryId: undefined
+      } as any);
       
       if (error) {
         setError(error.message || 'Signup failed');

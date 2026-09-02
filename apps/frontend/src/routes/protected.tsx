@@ -10,6 +10,8 @@ const Settings = React.lazy(() => import('../pages/Dashboard/Settings'));
 const Products = React.lazy(() => import('../pages/Dashboard/Products'));
 const NewProduct = React.lazy(() => import('../pages/Dashboard/NewProduct'));
 const EditProduct = React.lazy(() => import('../pages/Dashboard/EditProduct'));
+const Orders = React.lazy(() => import('../pages/Dashboard/Orders').then(module => ({ default: module.OrdersPage })));
+
 export const protectedRoutes: RouteObject[] = [
   {
     path: paths.app.dashboard.path,
@@ -38,6 +40,10 @@ export const protectedRoutes: RouteObject[] = [
       {
         path: 'products/:id/edit',
         element: <EditProduct />,
+      },
+      {
+        path: 'orders',
+        element: <Orders />,
       },
     ],
   },

@@ -1,8 +1,7 @@
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+import axios from 'axios';
+import type { AxiosError, AxiosRequestConfig } from 'axios';
 
-interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
-  body?: Record<string, unknown>;
-}
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
 
 class ApiError extends Error {
   constructor(_status: number, message: string) {
@@ -11,40 +10,41 @@ class ApiError extends Error {
   }
 }
 
-async function request<T>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> {
-  const { body, headers, ...rest } = options;
+// Create the axios instance
+const instance = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers,
-    },
-    credentials: 'include',
-    ...(body ? { body: JSON.stringify(body) } : {}),
-    ...rest,
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
-    throw new ApiError(response.status, errorData?.message || `Request failed (${response.status})`);
+// Interceptor to unwrap the response data directly
+instance.interceptors.response.use(
+  (response) => {
+    return response.data;
+  },
+  (error: AxiosError) => {
+    const status = error.response?.status || 500;
+    const message = (error.response?.data as { message?: string })?.message || error.message || `Request failed (${status})`;
+    return Promise.reject(new ApiError(status, message));
   }
+);
 
-  return response.json();
-}
-
+// We export a wrapper
 export const apiClient = {
-  get: <T>(endpoint: string, options?: ApiRequestOptions) =>
-    request<T>(endpoint, { ...options, method: 'GET' }),
+  get: <T>(endpoint: string, options?: AxiosRequestConfig): Promise<T> =>
+    instance.get(endpoint, options) as unknown as Promise<T>,
 
-  post: <T>(endpoint: string, body: Record<string, unknown>, options?: ApiRequestOptions) =>
-    request<T>(endpoint, { ...options, method: 'POST', body }),
+  post: <T>(endpoint: string, body?: unknown, options?: AxiosRequestConfig): Promise<T> =>
+    instance.post(endpoint, body, options) as unknown as Promise<T>,
 
-  put: <T>(endpoint: string, body: Record<string, unknown>, options?: ApiRequestOptions) =>
-    request<T>(endpoint, { ...options, method: 'PUT', body }),
+  put: <T>(endpoint: string, body?: unknown, options?: AxiosRequestConfig): Promise<T> =>
+    instance.put(endpoint, body, options) as unknown as Promise<T>,
 
-  delete: <T>(endpoint: string, options?: ApiRequestOptions) =>
-    request<T>(endpoint, { ...options, method: 'DELETE' }),
+  delete: <T>(endpoint: string, options?: AxiosRequestConfig): Promise<T> =>
+    instance.delete(endpoint, options) as unknown as Promise<T>,
 
-  patch: <T>(endpoint: string, body: Record<string, unknown>, options?: ApiRequestOptions) =>
-    request<T>(endpoint, { ...options, method: 'PATCH', body }),
+  patch: <T>(endpoint: string, body?: unknown, options?: AxiosRequestConfig): Promise<T> =>
+    instance.patch(endpoint, body, options) as unknown as Promise<T>,
 };

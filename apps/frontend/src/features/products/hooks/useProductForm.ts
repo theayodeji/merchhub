@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { productSchema } from '../schemas/product.schema';
-import type { ProductFormData } from '../schemas/product.schema';
+import { productFormSchema, type ProductFormData } from '@merchhub/shared';
 import { useCreateProduct, useUpdateProduct, useProductCategories } from './useProducts';
 import type { Product } from './useProducts';
 
@@ -24,7 +23,7 @@ export const useProductForm = ({ initialData }: UseProductFormProps = {}) => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema) as any,
+    resolver: zodResolver(productFormSchema),
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',
@@ -74,7 +73,7 @@ export const useProductForm = ({ initialData }: UseProductFormProps = {}) => {
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('description', data.description || '');
-    formData.append('price', Math.round(data.price * 100).toString()); // convert dollars to cents
+    formData.append('price', Math.round((data.price as number) * 100).toString()); // convert dollars to cents
     formData.append('stock', data.stock.toString());
     formData.append('categoryId', data.categoryId);
     formData.append('status', data.status);

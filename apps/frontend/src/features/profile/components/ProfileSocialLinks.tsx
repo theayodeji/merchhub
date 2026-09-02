@@ -1,6 +1,6 @@
 import type { UseFormReturn } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
-import type { ProfileFormData } from '../schemas/profile.schema';
+import type { ProfileFormData } from '@merchhub/shared';
 
 interface ProfileSocialLinksProps {
   form: UseFormReturn<ProfileFormData>;

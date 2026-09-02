@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 import { getProfile as fetchProfile } from '../services/get-profile.service';
 import { updateProfile as editProfile } from '../services/update-profile.service';
 import { getCategories as fetchCategories } from '../services/get-categories.service';
-import { updateProfileSchema } from '../dto/user.dto';
 import { storageService } from '../../../lib/storage';
 import { prisma } from '../../../lib/prisma';
 import { ForbiddenError, BadRequestError, NotFoundError } from '../../../errors/AppError';
@@ -28,7 +27,7 @@ export const getProfile = asyncHandler(async (req: Request, res: Response) => {
 export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
   const userId = (req as any).user.id;
   
-  const data = updateProfileSchema.parse(req.body);
+  const data = req.body;
   
   if (req.file) {
     // Only storing path/key in database

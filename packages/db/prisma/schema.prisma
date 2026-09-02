@@ -63,7 +63,7 @@ model Product {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  orders     Order[]
+  orderItems OrderItem[]
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
 
@@ -73,8 +73,6 @@ model Product {
 
 model Order {
   id        String  @id @default(uuid())
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
   sellerId  String
   seller    User    @relation("SellerOrders", fields: [sellerId], references: [id])
 
@@ -85,18 +83,35 @@ model Order {
   customerEmail   String?
   deliveryAddress String
 
-  quantity  Int
-  unitPrice Float
   total     Float
   status    OrderStatus @default(PENDING)
 
-  transaction Transaction?
+  transactionId String?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+
+  items     OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([buyerId])
   @@index([sellerId])
+  @@index([transactionId])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  
+  quantity  Int
+  unitPrice Float
+  total     Float
+
+  @@index([orderId])
+  @@index([productId])
 }
 
 model Category {
@@ -115,8 +130,7 @@ model CreatorCategory {
 
 model Transaction {
   id            String            @id @default(uuid())
-  orderId       String            @unique
-  order         Order             @relation(fields: [orderId], references: [id])
+  orders        Order[]
   amount        Float
   currency      String
   status        TransactionStatus @default(PENDING)

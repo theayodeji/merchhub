@@ -24,7 +24,7 @@ export const ProductForm = ({ initialData }: UseProductFormProps) => {
   } = useProductForm({ initialData });
 
   return (
-    <div className="animate-slide-in max-w-4xl mx-auto">
+    <div className="animate-slide-in max-w-5xl mx-auto">
       <div className="mb-8 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard/products')}>
           <ArrowLeft className="size-5" />
@@ -40,26 +40,24 @@ export const ProductForm = ({ initialData }: UseProductFormProps) => {
       </div>
 
       <form onSubmit={onSubmit} className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex flex-col gap-16">
           
+          <ProductMediaCard 
+            existingImages={existingImages}
+            selectedFiles={selectedFiles}
+            previewUrls={previewUrls}
+            onFileSelect={handleFileSelect}
+            onRemoveNewFile={removeNewFile}
+            onRemoveExistingImage={removeExistingImage}
+          />
+
           <ProductGeneralInfo 
             form={form} 
             categories={categories} 
             categoriesLoading={categoriesLoading} 
           />
 
-          <div className="space-y-6">
-            <ProductPublishingCard form={form} />
-
-            <ProductMediaCard 
-              existingImages={existingImages}
-              selectedFiles={selectedFiles}
-              previewUrls={previewUrls}
-              onFileSelect={handleFileSelect}
-              onRemoveNewFile={removeNewFile}
-              onRemoveExistingImage={removeExistingImage}
-            />
-          </div>
+          <ProductPublishingCard form={form} />
         </div>
 
         <div className="flex justify-end gap-4 border-t border-neutral-300 pt-6 pb-20">

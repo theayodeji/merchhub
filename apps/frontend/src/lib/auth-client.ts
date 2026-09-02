@@ -19,7 +19,7 @@ export const authClient = createAuthClient({
           optional: true,
         }
       }
-    }),
+    } as const),
     usernameClient(),
   ]
 });

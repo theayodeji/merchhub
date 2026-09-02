@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @theme {
   /* Proper Shadcn Semantic Color Palette */
   --color-background: var(--background);

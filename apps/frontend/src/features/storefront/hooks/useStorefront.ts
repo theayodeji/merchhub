@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiClient } from '../../../lib/api-client';
+import { useToast } from '@/components/ui/use-toast';
 import { type Product } from '../../products/hooks/useProducts';
 
 export interface CreatorProfileData {
@@ -45,7 +46,22 @@ export interface OrderResponse {
 }
 
 export const usePlaceOrder = () => {
+  const { toast } = useToast();
+
   return useMutation({
     mutationFn: (data: CreateOrderPayload) => apiClient.post<OrderResponse>('/api/orders', data as unknown as Record<string, unknown>),
+    onSuccess: () => {
+      toast({
+        title: 'Order Placed!',
+        description: 'Redirecting you to payment gateway...',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Order Failed',
+        description: error.message || 'Something went wrong while placing your order.',
+        variant: 'destructive',
+      });
+    }
   });
 };

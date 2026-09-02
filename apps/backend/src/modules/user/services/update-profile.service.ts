@@ -1,7 +1,7 @@
 import { prisma } from '../../../lib/prisma';
-import { UpdateProfileDto } from '../dto/user.dto';
+import type { UpdateProfileDTO } from '@merchhub/shared';
 
-export const updateProfile = async (userId: string, data: UpdateProfileDto) => {
+export const updateProfile = async (userId: string, data: UpdateProfileDTO) => {
   return prisma.user.update({
     where: { id: userId },
     data: {
@@ -11,7 +11,6 @@ export const updateProfile = async (userId: string, data: UpdateProfileDto) => {
       displayUsername: data.displayUsername,
       socialLinks: data.socialLinks ?? undefined,
       image: data.image || undefined,
-      role: data.role || undefined,
       isOnboarded: true
     },
   });

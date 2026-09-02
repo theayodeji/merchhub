@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Product } from "../../products/hooks/useProducts";
+import { useWishlistStore } from "../../../store/useWishlistStore";
 
 interface MarketplaceProductCardProps {
   product: Product;
@@ -12,13 +13,29 @@ export const MarketplaceProductCard = ({
   product,
 }: MarketplaceProductCardProps) => {
   const [activeImage, setActiveImage] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
+  const { isInWishlist, addItem, removeItem } = useWishlistStore();
+  const isLiked = isInWishlist(product.id);
+
+  const toggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isLiked) {
+      removeItem(product.id);
+    } else {
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images?.[0],
+      });
+    }
+  };
 
   const images = product.images?.length ? product.images : [];
   const hasMultipleImages = images.length > 1;
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-lg">
+    <div className="cursor-pointer group flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-lg">
       {/* Image Section */}
       <Link
         to={`/product/${product.id}`}
@@ -82,8 +99,8 @@ export const MarketplaceProductCard = ({
             <span />
           )}
           <button
-            onClick={() => setIsLiked(!isLiked)}
-            className="transition-transform hover:scale-110"
+            onClick={toggleWishlist}
+            className="transition-transform hover:scale-110 z-20 relative"
           >
             <Heart
               className={`size-5 ${isLiked ? "fill-red-500 text-red-500" : "text-gray-300"}`}
@@ -101,7 +118,7 @@ export const MarketplaceProductCard = ({
         {/* Creator Link */}
         {product.seller && (
           <Link
-            to={`/store/${product.seller.username}`}
+            to={`/${product.seller.username}`}
             className="mb-2 text-xs text-gray-500 hover:text-primary/60 transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
@@ -110,9 +127,8 @@ export const MarketplaceProductCard = ({
         )}
 
         {/* Price + Add to Cart */}
-        <div className="mt-auto flex items-end justify-between pt-2">
+        <div className="mt-auto flex items-end justify-between">
           <div>
-            <span className="block text-xs text-gray-400">Price</span>
             <span className="text-xl font-semibold text-primary">
               ${(product.price / 100).toFixed(2)}
             </span>

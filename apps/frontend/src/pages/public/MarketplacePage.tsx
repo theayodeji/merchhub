@@ -25,6 +25,54 @@ export const MarketplacePage = () => {
 
   return (
     <div className="w-full pb-16">
+      {/* Secondary Navigation */}
+      <div className="w-full border-b border-gray-200 bg-white hidden md:block">
+        <div className="container mx-auto px-4">
+          <ul className="flex items-center justify-center gap-8 py-4 text-xs font-bold text-gray-700 tracking-widest uppercase">
+            <li>
+              <Link to="#" className="hover:text-primary transition-colors">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="#" className="hover:text-primary transition-colors">
+                Categories
+              </Link>
+            </li>
+            <li>
+              <Link to="#" className="hover:text-primary transition-colors">
+                T-Shirts
+              </Link>
+            </li>
+            <li>
+              <Link to="#" className="hover:text-primary transition-colors">
+                Hoodies
+              </Link>
+            </li>
+            <li>
+              <Link to="#" className="hover:text-primary transition-colors">
+                Accessories
+              </Link>
+            </li>
+            <li>
+              <Link to="#" className="hover:text-primary transition-colors">
+                Creators
+              </Link>
+            </li>
+            <li>
+              <Link to="#" className="hover:text-primary transition-colors">
+                Best Sellers
+              </Link>
+            </li>
+            <li>
+              <Link to="#" className="text-red-500 hover:text-red-600 transition-colors">
+                Hot Offers
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className="relative w-full bg-neutral-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent z-10" />

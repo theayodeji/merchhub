@@ -42,7 +42,12 @@ export const ProductDetailsPage = () => {
         <OrderPlacementModal 
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          product={product}
+          items={[{
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1
+          }]}
           onSubmit={handleOrderSubmit}
           isSubmitting={placeOrderMutation.isPending}
         />

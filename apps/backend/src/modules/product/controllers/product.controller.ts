@@ -1,38 +1,15 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { prisma } from '../../../lib/prisma';
-import { createProductSchema, updateProductSchema } from "../dto/product.dto";
 import * as productService from "../services/product.service";
 import { storageService } from "../../../lib/storage";
-import { AppError, BadRequestError, NotFoundError } from "../../../errors/AppError";
-
-const processImages = async (
-  files: Express.Multer.File[] | undefined,
-  existingImages: string[] = [],
-): Promise<string[]> => {
-  if (!files || files.length === 0) return existingImages;
-
-  const uploadPromises = files.map((file) =>
-    storageService.uploadFile(file, "products"),
-  );
-  const newImages = await Promise.all(uploadPromises);
-
-  return [...existingImages, ...newImages];
-};
-
-const formatProductUrls = (product: any) => {
-  if (product && product.images && Array.isArray(product.images)) {
-    product.images = product.images.map((img: string) =>
-      img.startsWith("http") ? img : storageService.getFileUrl(img),
-    );
-  }
-  return product;
-};
+import { processImages, formatProductUrls } from '../../../utils/image.utils';
+import { BadRequestError, NotFoundError } from "../../../errors/AppError";
 
 export const createProduct = asyncHandler(
   async (req: Request, res: Response) => {
     const sellerId = (req as any).user.id;
-    const data = createProductSchema.parse(req.body);
+    const data = req.body;
 
     // Handle multiple images upload
     const files = req.files as Express.Multer.File[];
@@ -90,7 +67,7 @@ export const updateProduct = asyncHandler(
       throw new NotFoundError("Product not found");
     }
 
-    const data = updateProductSchema.parse(req.body);
+    const data = req.body;
 
     // Handle images if any were uploaded
     const files = req.files as Express.Multer.File[];

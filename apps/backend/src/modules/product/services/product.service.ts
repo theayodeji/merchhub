@@ -1,7 +1,8 @@
 import { prisma } from '../../../lib/prisma';
-import { CreateProductDto, UpdateProductDto } from '../dto/product.dto';
+import type { CreateProductDTO, UpdateProductDTO } from '@merchhub/shared';
+import { NotFoundError } from '../../../errors/AppError';
 
-export const createProduct = async (sellerId: string, data: CreateProductDto) => {
+export const createProduct = async (sellerId: string, data: CreateProductDTO) => {
   return prisma.product.create({
     data: {
       ...data,
@@ -31,7 +32,7 @@ export const getProductById = async (id: string, sellerId: string) => {
   });
 };
 
-export const updateProduct = async (id: string, sellerId: string, data: UpdateProductDto) => {
+export const updateProduct = async (id: string, sellerId: string, data: UpdateProductDTO) => {
   return prisma.product.update({
     where: { id, sellerId },
     data,

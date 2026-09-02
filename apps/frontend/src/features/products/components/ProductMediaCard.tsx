@@ -18,13 +18,13 @@ export const ProductMediaCard = ({
   onRemoveExistingImage,
 }: ProductMediaCardProps) => {
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Media</h2>
-        <span className="text-xs text-gray-500">{existingImages.length + selectedFiles.length}/5</span>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+        <h2 className="text-xl font-bold tracking-tight text-gray-900">Media</h2>
+        <span className="text-xs font-bold text-gray-400">{existingImages.length + selectedFiles.length}/5 IMAGES</span>
       </div>
       
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Existing Images */}
         {existingImages.map((url, i) => (
           <div key={`exist-${i}`} className="relative aspect-square rounded-md overflow-hidden border border-gray-200 group bg-gray-100">

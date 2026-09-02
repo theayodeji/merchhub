@@ -17,25 +17,44 @@ const MetricCard = ({ icon, label, value, bgColor }: MetricCardProps) => (
   </div>
 );
 
-export const MetricsGrid = () => {
+interface MetricsGridProps {
+  metrics: {
+    liveProductsCount: number;
+    activeOrdersCount: number;
+    totalRevenue: number;
+  } | null;
+  isLoading: boolean;
+}
+
+export const MetricsGrid = ({ metrics, isLoading }: MetricsGridProps) => {
+  if (isLoading || !metrics) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-32 bg-gray-100 rounded-md animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <MetricCard
         icon={<TrendingUp className="size-6" />}
         label="Total Revenue"
-        value="$0.00"
+        value={`$${(metrics.totalRevenue / 100).toFixed(2)}`}
         bgColor="bg-green-50 text-green-600"
       />
       <MetricCard
         icon={<ShoppingBag className="size-6" />}
         label="Active Orders"
-        value="0"
+        value={metrics.activeOrdersCount.toString()}
         bgColor="bg-blue-50 text-blue-600"
       />
       <MetricCard
         icon={<PackageOpen className="size-6" />}
         label="Live Products"
-        value="0"
+        value={metrics.liveProductsCount.toString()}
         bgColor="bg-purple-50 text-purple-600"
       />
     </div>

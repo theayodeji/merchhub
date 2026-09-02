@@ -6,9 +6,10 @@ export interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  error?: boolean;
 }
 
-export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
+export const RichTextEditor = ({ value, onChange, error }: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -32,7 +33,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   }
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white overflow-hidden shadow-sm">
+    <div className={`rounded-md border overflow-hidden shadow-sm transition-colors ${error ? 'border-red-500 ring-1 ring-red-500 bg-white' : 'border-gray-200 bg-white'}`}>
       <div className="flex flex-wrap items-center gap-1 border-b border-gray-200 bg-gray-50 p-1">
         <button
           type="button"

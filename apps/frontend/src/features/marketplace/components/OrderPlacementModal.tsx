@@ -7,33 +7,39 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Product } from "../../products/hooks/useProducts";
-import type { CreateOrderPayload } from "../../storefront/hooks/useStorefront";
 import { authClient } from "../../../lib/auth-client";
+
+interface CheckoutItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
 
 interface OrderPlacementModalProps {
   isOpen: boolean;
   onClose: () => void;
-  product: Product;
-  onSubmit: (data: CreateOrderPayload) => void;
+  items: CheckoutItem[];
+  onSubmit: (data: any) => void;
   isSubmitting: boolean;
 }
 
 export const OrderPlacementModal = ({
   isOpen,
   onClose,
-  product,
+  items,
   onSubmit,
   isSubmitting,
 }: OrderPlacementModalProps) => {
   const { data: session } = authClient.useSession();
-  const [quantity, setQuantity] = useState(1);
   const [formData, setFormData] = useState({
     customerName: "",
     customerPhone: "",
     customerEmail: "",
     deliveryAddress: "",
   });
+
+  const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   useEffect(() => {
     if (session?.user) {
@@ -48,8 +54,7 @@ export const OrderPlacementModal = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      productId: product.id,
-      quantity,
+      items: items.map(i => ({ productId: i.id, quantity: i.quantity })),
       ...formData,
     });
   };
@@ -61,24 +66,12 @@ export const OrderPlacementModal = ({
           <DialogTitle className="text-black">Complete Your Order</DialogTitle>
           <DialogDescription className="text-gray-600">
             You are ordering{" "}
-            <strong className="text-black">{product.name}</strong> for $
-            {((product.price * quantity) / 100).toFixed(2)}.
+            <strong className="text-black">{items.length} item(s)</strong> for $
+            {(totalAmount / 100).toFixed(2)}.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-black">Quantity</label>
-            <input
-              type="number"
-              min={1}
-              max={product.stock}
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              className="rounded-md border border-neutral-200 bg-transparent px-3 py-2 text-sm text-black"
-              required
-            />
-          </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-black">Full Name</label>

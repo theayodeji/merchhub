@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { profileSchema } from '../schemas/profile.schema';
-import type { ProfileFormData } from '../schemas/profile.schema';
+import { profileFormSchema, type ProfileFormData } from '@merchhub/shared';
 import { useProfile, useUpdateProfile } from './useProfile';
 
 export const useEditProfileForm = () => {
@@ -13,7 +12,7 @@ export const useEditProfileForm = () => {
   const [avatarPreview, setAvatarPreview] = useState<string>('');
 
   const form = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema) as any,
+    resolver: zodResolver(profileFormSchema),
     defaultValues: {
       displayUsername: '',
       bio: '',
