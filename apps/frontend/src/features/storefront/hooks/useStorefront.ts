@@ -40,7 +40,7 @@ export interface CreateOrderPayload {
 }
 
 export interface OrderResponse {
-  order: any;
+  orders: any[];
   paymentUrl: string;
   reference: string;
 }

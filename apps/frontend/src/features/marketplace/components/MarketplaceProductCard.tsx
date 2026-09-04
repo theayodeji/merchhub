@@ -53,12 +53,12 @@ export const MarketplaceProductCard = ({
         )}
 
         {/* Product image */}
-        <div className="flex aspect-square items-center justify-center">
+        <div className="flex aspect-square items-center justify-center mb-1">
           {images.length > 0 ? (
             <img
               src={images[activeImage]}
               alt={product.name}
-              className="rounded-2xl max-h-full max-w-full object-contain"
+              className="bg-neutral-100 rounded-2xl max-h-full w-full object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
@@ -69,7 +69,7 @@ export const MarketplaceProductCard = ({
 
         {/* Dot indicators */}
         {hasMultipleImages && (
-          <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+          <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
             {images.map((_, idx) => (
               <button
                 key={idx}
@@ -133,7 +133,7 @@ export const MarketplaceProductCard = ({
               ${(product.price / 100).toFixed(2)}
             </span>
           </div>
-          <Button size="sm" asChild>
+          <Button size="sm" asChild className="px-3">
             <Link to={`/product/${product.id}`} className="text-xs">
               <ShoppingCart className="mr-1.5 size-1" />
               Buy Now

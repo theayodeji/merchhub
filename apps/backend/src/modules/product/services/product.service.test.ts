@@ -6,6 +6,10 @@ import { ProductStatus } from '@merchhub/db';
 
 vi.mock('../../../lib/prisma');
 
+vi.mock('../../../events/event-bus', () => ({
+  getEventBus: () => ({ publish: vi.fn(), subscribe: vi.fn() })
+}));
+
 describe('Product Service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -54,12 +58,13 @@ describe('Product Service', () => {
 
   describe('deleteProduct', () => {
     it('should successfully delete a product', async () => {
-      prisma.product.delete.mockResolvedValue({} as any);
+      prisma.product.update.mockResolvedValue({ id: 'prod_1', status: 'ARCHIVED' } as any);
 
       await productService.deleteProduct('prod_1', 'seller_1');
 
-      expect(prisma.product.delete).toHaveBeenCalledWith({
+      expect(prisma.product.update).toHaveBeenCalledWith({
         where: { id: 'prod_1', sellerId: 'seller_1' },
+        data: { status: 'ARCHIVED' }
       });
     });
   });

@@ -12,7 +12,15 @@ import { productRouter } from './modules/product/routes';
 import { storefrontRouter } from './modules/storefront/routes';
 import { orderRouter } from './modules/order/routes';
 
+import { initEventBus } from './events/event-bus';
+import { EmitterDriver } from './events/drivers/emitter.driver';
+import { registerAllHandlers } from './events/registry';
+
 const app = express();
+
+// Initialize Event Bus before anything else
+initEventBus(new EmitterDriver());
+registerAllHandlers();
 
 // Middlewares
 app.use(helmet());

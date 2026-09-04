@@ -12,6 +12,7 @@ export const baseUserSchema = z.object({
   bio: z.string().nullable(),
   socialLinks: z.any().nullable(), // JSON in DB
   creatorCategoryId: z.string().uuid().nullable(),
+  isOnboarded: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -26,6 +27,7 @@ export const updateProfileSchema = z.object({
   ).optional(),
   creatorCategoryId: z.string().uuid().optional(),
   image: z.string().optional(),
+  role: z.enum(['CUSTOMER', 'CREATOR', 'ADMIN']).optional(),
 });
 
 export const profileFormSchema = z.object({

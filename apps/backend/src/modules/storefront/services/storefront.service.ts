@@ -14,8 +14,15 @@ export const getCreatorByUsername = async (username: string) => {
       socialLinks: true,
       products: {
         where: { status: 'PUBLISHED' },
-        include: { category: true },
-        orderBy: { createdAt: 'desc' }
+        include: { 
+          category: true,
+          _count: {
+            select: { orderItems: true }
+          }
+        },
+        orderBy: { 
+          orderItems: { _count: 'desc' }
+        }
       }
     }
   });

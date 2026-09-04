@@ -13,6 +13,8 @@ const EditProduct = React.lazy(() => import('../pages/Dashboard/EditProduct'));
 const ProductDetails = React.lazy(() => import('../pages/Dashboard/ProductDetails'));
 const Orders = React.lazy(() => import('../pages/Dashboard/Orders').then(module => ({ default: module.OrdersPage })));
 const OrderDetails = React.lazy(() => import('../pages/Dashboard/OrderDetails'));
+const ShopperPurchasesPage = React.lazy(() => import('../pages/public/ShopperPurchasesPage').then(module => ({ default: module.ShopperPurchasesPage })));
+import { PublicLayout } from '../components/layout/PublicLayout';
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -64,5 +66,19 @@ export const protectedRoutes: RouteObject[] = [
         <Onboarding />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: '/profile',
+    element: (
+      <ProtectedRoute>
+        <PublicLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: 'purchases',
+        element: <ShopperPurchasesPage />,
+      },
+    ],
   }
 ];

@@ -111,7 +111,7 @@ describe('User Controller', () => {
 
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id: 'user_1' },
-        data: { role: 'CREATOR' }
+        data: { role: 'CREATOR', isOnboarded: true }
       });
       expect(res.json).toHaveBeenCalledWith({ id: 'user_1', role: 'CREATOR' });
     });

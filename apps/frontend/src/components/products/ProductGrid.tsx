@@ -21,7 +21,7 @@ export const ProductGrid = ({
 }: ProductGridProps) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6">
         {Array.from({ length: 12 }).map((_, i) => (
           <div
             key={i}
@@ -44,7 +44,7 @@ export const ProductGrid = ({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:gap-6">
         {products.map((product) => (
           <MarketplaceProductCard key={product.id} product={product} />
         ))}

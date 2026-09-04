@@ -79,7 +79,7 @@ export const updateRole = asyncHandler(async (req: Request, res: Response) => {
 
   const profile = await prisma.user.update({
     where: { id: userId },
-    data: { role }
+    data: { role, isOnboarded: true }
   });
 
   res.json(profile);

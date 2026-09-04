@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import { useToast } from '@/components/ui/use-toast';
+import type { DashboardOrderFilterDTO, PaginatedResponse } from '@merchhub/shared';
 
 export type OrderStatus = 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
 
@@ -30,12 +31,19 @@ export interface CreatorOrder {
   };
 }
 
-export const useCreatorOrders = () => {
+export const useCreatorOrders = (filters?: DashboardOrderFilterDTO) => {
   return useQuery({
-    queryKey: ['creatorOrders'],
-    queryFn: async (): Promise<CreatorOrder[]> => {
-      const response = await apiClient.get<{ status: string; data: CreatorOrder[] }>('/api/orders/creator');
-      return response.data;
+    queryKey: ['creatorOrders', filters],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters?.page) params.append('page', filters.page.toString());
+      if (filters?.limit) params.append('limit', filters.limit.toString());
+      if (filters?.search) params.append('search', filters.search);
+      if (filters?.status) params.append('status', filters.status);
+      if (filters?.dateRange) params.append('dateRange', filters.dateRange);
+
+      const response = await apiClient.get<{ status: string; data: CreatorOrder[]; meta?: PaginatedResponse<CreatorOrder>['meta'] }>(`/api/orders/creator?${params.toString()}`);
+      return response;
     }
   });
 };

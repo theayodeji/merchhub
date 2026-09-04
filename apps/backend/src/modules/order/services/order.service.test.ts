@@ -12,6 +12,10 @@ vi.mock('../../../lib/payment', () => ({
   },
 }));
 
+vi.mock('../../../events/event-bus', () => ({
+  getEventBus: () => ({ publish: vi.fn(), subscribe: vi.fn() })
+}));
+
 describe('Order Service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -64,7 +68,8 @@ describe('Order Service', () => {
       });
 
       prisma.product.update.mockResolvedValue({} as any);
-      prisma.order.create.mockResolvedValue({ id: 'order_1' } as any);
+      prisma.order.create.mockResolvedValue({ id: 'order_1', sellerId: 'seller_1', buyerId: null, customerName: 'John Doe', customerEmail: 'john@example.com', total: 2000, items: [] } as any);
+      prisma.transaction.create.mockResolvedValue({ id: 'txn_1' } as any);
 
       const result = await orderService.createOrderWithPayment(mockOrderData);
 
@@ -82,6 +87,84 @@ describe('Order Service', () => {
       expect(prisma.order.create).toHaveBeenCalled();
       expect(result.paymentUrl).toBe('https://pay.example.com/123');
       expect(result.reference).toBe('REF-123');
+    });
+
+    it('should split items from different creators into separate orders', async () => {
+      const multiCreatorOrderData = {
+        ...mockOrderData,
+        items: [
+          { productId: 'prod_1', quantity: 1 },
+          { productId: 'prod_2', quantity: 2 },
+        ]
+      };
+
+      prisma.product.findMany.mockResolvedValue([
+        {
+          id: 'prod_1',
+          sellerId: 'creator_A',
+          stock: 5,
+          price: 1000,
+          status: 'PUBLISHED',
+          name: 'Product A'
+        },
+        {
+          id: 'prod_2',
+          sellerId: 'creator_B',
+          stock: 5,
+          price: 2000,
+          status: 'PUBLISHED',
+          name: 'Product B'
+        }
+      ] as any);
+
+      (paymentService.initializePayment as any).mockResolvedValue({
+        authorizationUrl: 'https://pay.example.com/multi',
+        reference: 'REF-MULTI',
+      });
+
+      prisma.product.update.mockResolvedValue({} as any);
+      
+      // Mock order creation to return a unique ID based on the seller to verify the output easily
+      prisma.order.create.mockImplementation(({ data }: any) => Promise.resolve({ id: `order_${data.sellerId}`, sellerId: data.sellerId, buyerId: null, customerName: data.customerName, customerEmail: data.customerEmail, total: data.total, items: [] }));
+      prisma.transaction.create.mockResolvedValue({ id: 'txn_multi' } as any);
+
+      const result = await orderService.createOrderWithPayment(multiCreatorOrderData);
+
+      // Verify payment was initialized for total amount (1000*1 + 2000*2 = 5000)
+      expect(paymentService.initializePayment).toHaveBeenCalledWith(expect.objectContaining({
+        amount: 5000,
+      }));
+
+      // Verify two orders were created, one for each creator
+      expect(prisma.order.create).toHaveBeenCalledTimes(2);
+      expect(prisma.order.create).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({
+          sellerId: 'creator_A',
+          total: 1000,
+          items: {
+            create: [
+              expect.objectContaining({ productId: 'prod_1', quantity: 1 })
+            ]
+          }
+        })
+      }));
+      
+      expect(prisma.order.create).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({
+          sellerId: 'creator_B',
+          total: 4000,
+          items: {
+            create: [
+              expect.objectContaining({ productId: 'prod_2', quantity: 2 })
+            ]
+          }
+        })
+      }));
+
+      // Verify the result contains both orders
+      expect(result.orders.length).toBe(2);
+      expect(result.orders.some((o: any) => o.id === 'order_creator_A')).toBe(true);
+      expect(result.orders.some((o: any) => o.id === 'order_creator_B')).toBe(true);
     });
   });
 
@@ -105,6 +188,10 @@ describe('Order Service', () => {
       prisma.order.findUnique.mockResolvedValue({
         id: 'order_1',
         sellerId: 'seller_1',
+        status: 'PENDING',
+        buyerId: null,
+        customerEmail: 'test@example.com',
+        customerName: 'Test User',
       } as any);
 
       prisma.order.update.mockResolvedValue({} as any);

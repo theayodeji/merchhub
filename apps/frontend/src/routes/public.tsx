@@ -10,6 +10,7 @@ import { OrderSuccessPage } from '../pages/public/OrderSuccessPage';
 import { PublicLayout } from '../components/layout/PublicLayout';
 
 import { SearchPage } from '../pages/public/SearchPage';
+import { ShopperOrderDetailsPage } from '../pages/public/ShopperOrderDetailsPage';
 
 const Login = React.lazy(() => import('../pages/Auth/Login'));
 const Signup = React.lazy(() => import('../pages/Auth/Signup'));
@@ -49,6 +50,10 @@ export const publicRoutes: RouteObject[] = [
       {
         path: '/order-success',
         element: <OrderSuccessPage />,
+      },
+      {
+        path: '/orders/:id',
+        element: <ShopperOrderDetailsPage />,
       }
     ]
   }

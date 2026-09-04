@@ -1,10 +1,9 @@
-import { useCreatorOrders } from "../hooks/useOrders";
 import { format } from "date-fns";
 import { CopyButton } from "@/components/ui/copy-button";
 import { useNavigate } from "react-router-dom";
+import type { CreatorOrder } from "../hooks/useOrders";
 
-export const OrderList = () => {
-  const { data: orders, isLoading, isError } = useCreatorOrders();
+export const OrderList = ({ orders, isLoading, isError }: { orders?: CreatorOrder[], isLoading: boolean, isError: boolean }) => {
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -37,7 +36,7 @@ export const OrderList = () => {
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm mb-4">
       <table className="w-full text-left text-sm text-gray-600">
         <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-700">
           <tr>

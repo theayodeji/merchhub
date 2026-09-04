@@ -98,18 +98,16 @@ describe('Product Controller', () => {
       expect(error).toBeInstanceOf(NotFoundError);
     });
 
-    it('should delete product and its images', async () => {
+    it('should archive product and preserve its images', async () => {
       mockReq.params = { id: 'prod-1' };
       const productMock = { id: 'prod-1', images: ['img1.jpg', 'img2.jpg'] } as any;
       vi.mocked(productService.getProductById).mockResolvedValue(productMock);
-      vi.mocked(storageService.deleteFile).mockResolvedValue();
 
       await productController.deleteProduct(mockReq as Request, mockRes as Response, mockNext);
 
       expect(productService.deleteProduct).toHaveBeenCalledWith('prod-1', 'seller-1');
-      expect(storageService.deleteFile).toHaveBeenCalledWith('img1.jpg');
-      expect(storageService.deleteFile).toHaveBeenCalledWith('img2.jpg');
-      expect(mockRes.json).toHaveBeenCalledWith({ success: true, message: 'Product deleted' });
+      expect(storageService.deleteFile).not.toHaveBeenCalled();
+      expect(mockRes.json).toHaveBeenCalledWith({ success: true, message: 'Product archived successfully' });
     });
   });
 });

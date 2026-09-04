@@ -24,13 +24,14 @@ describe('Order Controller', () => {
 
   describe('placeOrder', () => {
     it('should place an order and return 201', async () => {
+      mockReq.headers = {};
       mockReq.body = { productId: 'prod-1', quantity: 2 };
       const createdOrder = { id: 'order-1' };
       vi.mocked(orderService.createOrderWithPayment).mockResolvedValue(createdOrder as any);
 
       await orderController.placeOrder(mockReq as Request, mockRes as Response, mockNext);
 
-      expect(orderService.createOrderWithPayment).toHaveBeenCalledWith(mockReq.body);
+      expect(orderService.createOrderWithPayment).toHaveBeenCalledWith(mockReq.body, undefined);
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.json).toHaveBeenCalledWith(createdOrder);
     });
@@ -39,12 +40,17 @@ describe('Order Controller', () => {
   describe('getCreatorOrders', () => {
     it('should fetch creator orders and return them', async () => {
       (mockReq as any).sellerId = 'creator-1';
-      vi.mocked(orderService.findOrdersBySellerId).mockResolvedValue([]);
+      (mockReq as any).query = {};
+      const meta = { total: 0, page: 1, limit: 20, totalPages: 0 };
+      vi.mocked(orderService.findOrdersBySellerId).mockResolvedValue({
+        data: [],
+        meta
+      } as any);
 
       await orderController.getCreatorOrders(mockReq as Request, mockRes as Response, mockNext);
 
-      expect(orderService.findOrdersBySellerId).toHaveBeenCalledWith('creator-1');
-      expect(mockRes.json).toHaveBeenCalledWith({ status: 'success', data: [] });
+      expect(orderService.findOrdersBySellerId).toHaveBeenCalledWith('creator-1', { page: 1, limit: 20 });
+      expect(mockRes.json).toHaveBeenCalledWith({ status: 'success', data: [], meta });
     });
   });
 

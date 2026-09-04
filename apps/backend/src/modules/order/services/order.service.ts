@@ -1,10 +1,11 @@
 import { prisma } from '../../../lib/prisma';
-import type { CreateOrderDTO } from '@merchhub/shared';
+import type { CreateOrderDTO, DashboardOrderFilterDTO } from '@merchhub/shared';
 import { paymentService } from '../../../lib/payment';
 import { BadRequestError, NotFoundError } from '../../../errors/AppError';
 import { OrderStatus } from '@merchhub/db';
+import { getEventBus } from '../../../events/event-bus';
 
-export const createOrderWithPayment = async (data: CreateOrderDTO) => {
+export const createOrderWithPayment = async (data: CreateOrderDTO, buyerId?: string) => {
   // 1. Fetch products and group by seller
   const productIds = data.items.map(item => item.productId);
   const products = await prisma.product.findMany({
@@ -69,6 +70,7 @@ export const createOrderWithPayment = async (data: CreateOrderDTO) => {
       const newOrder = await tx.order.create({
         data: {
           sellerId,
+          buyerId, // Attach buyerId if provided
           customerName: data.customerName,
           customerPhone: data.customerPhone,
           customerEmail: data.customerEmail,
@@ -94,6 +96,28 @@ export const createOrderWithPayment = async (data: CreateOrderDTO) => {
     return createdOrders;
   });
 
+  // Emit order.created for each order — fires AFTER transaction commits
+  const bus = getEventBus();
+  for (const order of orders) {
+    bus.publish({
+      type: 'order.created',
+      payload: {
+        orderId: order.id,
+        sellerId: order.sellerId,
+        buyerId: order.buyerId ?? undefined,
+        customerName: order.customerName,
+        customerEmail: order.customerEmail,
+        total: order.total,
+        items: order.items.map(item => ({
+          productId: item.productId,
+          productName: '',
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+        }))
+      }
+    });
+  }
+
   return {
     orders,
     paymentUrl: paymentInit.authorizationUrl,
@@ -101,24 +125,64 @@ export const createOrderWithPayment = async (data: CreateOrderDTO) => {
   };
 };
 
-export const findOrdersBySellerId = async (sellerId: string) => {
-  return prisma.order.findMany({
-    where: { sellerId },
-    include: {
-      items: {
-        include: {
-          product: {
-            select: {
-              name: true,
-              images: true
+export const findOrdersBySellerId = async (sellerId: string, query: DashboardOrderFilterDTO) => {
+  const { page, limit, search, status, dateRange } = query;
+  const skip = (page - 1) * limit;
+  const take = limit;
+
+  const where: any = { sellerId };
+
+  if (status) {
+    where.status = status;
+  }
+
+  if (search) {
+    where.customerName = { contains: search, mode: 'insensitive' };
+  }
+
+  if (dateRange) {
+    const date = new Date();
+    if (dateRange === '7d') {
+      date.setDate(date.getDate() - 7);
+      where.createdAt = { gte: date };
+    } else if (dateRange === '30d') {
+      date.setDate(date.getDate() - 30);
+      where.createdAt = { gte: date };
+    }
+  }
+
+  const [total, orders] = await prisma.$transaction([
+    prisma.order.count({ where }),
+    prisma.order.findMany({
+      where,
+      skip,
+      take,
+      include: {
+        items: {
+          include: {
+            product: {
+              select: {
+                name: true,
+                images: true
+              }
             }
           }
-        }
+        },
+        transaction: true
       },
-      transaction: true
-    },
-    orderBy: { createdAt: 'desc' }
-  });
+      orderBy: { createdAt: 'desc' }
+    })
+  ]);
+
+  return {
+    data: orders,
+    meta: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
 };
 
 export const findOrderByIdAndSellerId = async (orderId: string, sellerId: string) => {
@@ -157,8 +221,82 @@ export const changeOrderStatus = async (orderId: string, sellerId: string, statu
     throw new BadRequestError('You do not have permission to update this order');
   }
 
-  return prisma.order.update({
+  const updatedOrder = await prisma.order.update({
     where: { id: orderId },
     data: { status }
+  });
+
+  getEventBus().publish({
+    type: 'order.status_changed',
+    payload: {
+      orderId,
+      previousStatus: order.status as string,
+      newStatus: status as string,
+      sellerId,
+      buyerId: order.buyerId ?? undefined,
+      customerEmail: order.customerEmail,
+      customerName: order.customerName,
+    }
+  });
+
+  return updatedOrder;
+};
+
+export const findOrderById = async (orderId: string) => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      items: {
+        include: {
+          product: {
+            select: {
+              name: true,
+              images: true,
+              seller: {
+                select: {
+                  name: true,
+                  username: true,
+                  displayUsername: true
+                }
+              }
+            }
+          }
+        }
+      },
+      transaction: true
+    }
+  });
+
+  if (!order) {
+    throw new NotFoundError('Order not found');
+  }
+
+  return order;
+};
+
+export const findOrdersByBuyerId = async (buyerId: string) => {
+  return prisma.order.findMany({
+    where: { buyerId },
+    include: {
+      items: {
+        include: {
+          product: {
+            select: {
+              name: true,
+              images: true,
+              seller: {
+                select: {
+                  name: true,
+                  username: true,
+                  displayUsername: true
+                }
+              }
+            }
+          }
+        }
+      },
+      transaction: true
+    },
+    orderBy: { createdAt: 'desc' }
   });
 };

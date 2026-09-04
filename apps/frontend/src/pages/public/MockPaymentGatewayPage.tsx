@@ -24,7 +24,12 @@ export const MockPaymentGatewayPage = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
       setStatus('success');
       setTimeout(() => {
-        navigate('/order-success');
+        const orderId = searchParams.get('orderId');
+        if (orderId) {
+          navigate(`/orders/${orderId}`);
+        } else {
+          navigate('/order-success');
+        }
       }, 1000);
     } catch (error) {
       setStatus('error');

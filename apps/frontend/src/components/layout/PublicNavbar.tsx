@@ -54,7 +54,7 @@ export const PublicNavbar = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="flex-1 max-w-2xl mx-auto hidden md:flex">
+        <div className="flex-1 max-w-md mx-auto hidden md:flex">
           <div className="relative w-full flex items-center">
             <input
               type="text"
@@ -63,7 +63,7 @@ export const PublicNavbar = () => {
             />
             <div className="absolute inset-y-0 right-0 flex items-center">
               <button className="h-full px-6 rounded-r-full bg-primary hover:bg-primary/90 text-white font-bold text-xs tracking-wider transition-colors">
-                SEARCH
+                <Search className="size-6" />
               </button>
             </div>
           </div>
@@ -89,7 +89,7 @@ export const PublicNavbar = () => {
                 className="flex items-center gap-2 hover:text-primary transition-colors text-sm font-medium focus:outline-none"
               >
                 <User className="size-5" />
-                <span>Account</span>
+                {/* <span>Account</span> */}
               </button>
 
               {isDropdownOpen && (
@@ -114,6 +114,13 @@ export const PublicNavbar = () => {
                     onClick={() => setIsDropdownOpen(false)}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    to={paths.app.purchases.path}
+                    className="block px-3 py-2 text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors rounded-md"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    My Purchases
                   </Link>
                   <button
                     onClick={() => {

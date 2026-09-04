@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../../lib/api-client';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
+import type { DashboardProductFilterDTO, PaginatedResponse } from '@merchhub/shared';
 
 export interface Product {
   id: string;
@@ -12,17 +13,25 @@ export interface Product {
   categoryId: string | null;
   category: { id: string; name: string; slug: string } | null;
   images: string[];
-  status: 'DRAFT' | 'PUBLISHED';
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   sellerId: string;
   seller?: { username: string; displayUsername: string | null; image: string | null };
   createdAt: string;
   updatedAt: string;
 }
 
-export const useProducts = () => {
+export const useProducts = (filters?: DashboardProductFilterDTO) => {
   return useQuery({
-    queryKey: ['products'],
-    queryFn: () => apiClient.get<Product[]>('/api/products'),
+    queryKey: ['products', filters],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (filters?.page) params.append('page', filters.page.toString());
+      if (filters?.limit) params.append('limit', filters.limit.toString());
+      if (filters?.search) params.append('search', filters.search);
+      if (filters?.status) params.append('status', filters.status);
+      
+      return apiClient.get<PaginatedResponse<Product>>(`/api/products?${params.toString()}`);
+    },
   });
 };
 
@@ -54,14 +63,12 @@ export const useCreateProduct = () => {
 
   return useMutation({
     mutationFn: async (formData: FormData) => {
-      // Use fetch directly for FormData since apiClient is currently set up for JSON
       const token = document.cookie.split('; ').find(row => row.startsWith('better-auth.session_token='))?.split('=')[1];
       
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'}/api/products`, {
         method: 'POST',
         body: formData,
         headers: {
-           // Don't set Content-Type here, let the browser set it with the boundary
            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         },
         credentials: 'include',

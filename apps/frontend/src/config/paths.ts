@@ -24,5 +24,9 @@ export const paths = {
       path: '/onboarding',
       getHref: () => '/onboarding',
     },
+    purchases: {
+      path: '/profile/purchases',
+      getHref: () => '/profile/purchases',
+    },
   },
 } as const;

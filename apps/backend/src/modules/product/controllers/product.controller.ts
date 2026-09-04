@@ -32,7 +32,7 @@ export const getProductCategories = asyncHandler(
   },
 );
 
-import { ProductFilterSchema, PaginatedResponse } from '@merchhub/shared';
+import { ProductFilterSchema, PaginatedResponse, DashboardProductFilterSchema } from '@merchhub/shared';
 
 export const getAllProducts = asyncHandler(async (req: Request, res: Response) => {
   const query = ProductFilterSchema.parse(req.query);
@@ -86,9 +86,13 @@ export const getAllProducts = asyncHandler(async (req: Request, res: Response) =
 export const getMyProducts = asyncHandler(
   async (req: Request, res: Response) => {
     const sellerId = (req as any).user.id;
-    const products = await productService.getProductsBySeller(sellerId);
+    const query = DashboardProductFilterSchema.parse(req.query || {});
+    const productsResponse = await productService.getProductsBySeller(sellerId, query);
 
-    res.json(products.map(formatProductUrls));
+    res.json({
+      data: productsResponse.data.map(formatProductUrls),
+      meta: productsResponse.meta,
+    });
   },
 );
 
@@ -177,11 +181,6 @@ export const deleteProduct = asyncHandler(
 
     await productService.deleteProduct(req.params.id as string, sellerId);
 
-    // Delete all associated images
-    for (const img of existingProduct.images) {
-      await storageService.deleteFile(img).catch(console.error);
-    }
-
-    res.json({ success: true, message: "Product deleted" });
+    res.json({ success: true, message: "Product archived successfully" });
   },
 );

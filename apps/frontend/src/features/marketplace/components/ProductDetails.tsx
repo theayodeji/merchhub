@@ -153,12 +153,12 @@ export const ProductDetails = ({
           <div className="space-y-8">
             {/* Product Details */}
             <div>
-              <h3 className="text-sm  mb-2 font-bold text-black uppercase tracking-wider">
+              <h3 className="text-base mb-2 font-bold text-black uppercase tracking-wider">
                 Product Details
               </h3>
               <div className="relative">
                 <div
-                  className={`prose prose-sm text-neutral-600 max-w-none prose-p:leading-[1.6] prose-p:mb-3 prose-headings:mb-4 prose-ul:space-y-3 prose-li:leading-relaxed overflow-hidden transition-all duration-300 ${!isDescExpanded ? "max-h-[160px]" : ""}`}
+                  className={`prose prose-strong:text-neutral-500 prose-sm text-neutral-500 max-w-none prose-p:leading-[1.6] prose-p:mb-3 prose-ul:space-y-3 prose-li:leading-relaxed overflow-hidden transition-all duration-300 ${!isDescExpanded ? "max-h-[160px]" : ""}`}
                   dangerouslySetInnerHTML={{ __html: product.description }}
                 />
                 {!isDescExpanded && (
