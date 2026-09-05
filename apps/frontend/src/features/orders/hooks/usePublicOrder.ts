@@ -4,13 +4,18 @@ import type { CreatorOrder as PublicOrder } from './useOrders';
 
 export type { PublicOrder };
 
-export const usePublicOrder = (orderId: string) => {
+export const usePublicOrder = (orderId: string, email?: string) => {
   return useQuery({
-    queryKey: ['publicOrder', orderId],
+    queryKey: ['publicOrder', orderId, email],
     queryFn: async (): Promise<PublicOrder> => {
-      const response = await apiClient.get<{ status: string; data: PublicOrder }>(`/api/orders/public/${orderId}`);
+      if (!email) throw new Error("Email is required to verify the order");
+      const response = await apiClient.post<{ status: string; data: PublicOrder }>(
+        `/api/orders/public/${orderId}/verify`,
+        { email }
+      );
       return response.data;
     },
-    enabled: !!orderId,
+    enabled: !!orderId && !!email,
+    retry: false, // Don't keep retrying if verification fails (e.g. 403)
   });
 };

@@ -45,12 +45,25 @@ export interface OrderResponse {
   reference: string;
 }
 
+import { useVerifiedOrdersStore } from '@/store/useVerifiedOrdersStore';
+
 export const usePlaceOrder = () => {
   const { toast } = useToast();
+  const addVerifiedOrder = useVerifiedOrdersStore((state) => state.addVerifiedOrder);
 
   return useMutation({
     mutationFn: (data: CreateOrderPayload) => apiClient.post<OrderResponse>('/api/orders', data as unknown as Record<string, unknown>),
-    onSuccess: () => {
+    onSuccess: (response, variables) => {
+      // Automatically add new orders to the verified store so user doesn't have to verify immediately
+      const orders = response.orders || (response as any).data?.orders;
+      if (variables.customerEmail && orders) {
+        orders.forEach((order: any) => {
+          if (order.id) {
+            addVerifiedOrder(order.id, variables.customerEmail!);
+          }
+        });
+      }
+      
       toast({
         title: 'Order Placed!',
         description: 'Redirecting you to payment gateway...',

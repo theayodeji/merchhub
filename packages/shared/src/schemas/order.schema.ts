@@ -45,3 +45,9 @@ export type OrderResponseDTO = z.infer<typeof baseOrderSchema>;
 // Types going in (Requests)
 export type CreateOrderDTO = z.infer<typeof createOrderSchema>;
 export type UpdateOrderStatusDTO = z.infer<typeof updateOrderStatusSchema>;
+
+export const verifyOrderSchema = z.object({
+  email: z.string().email(),
+});
+
+export type VerifyOrderDTO = z.infer<typeof verifyOrderSchema>;

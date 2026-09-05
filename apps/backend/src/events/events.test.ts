@@ -107,9 +107,10 @@ describe('Event System', () => {
       expect(subscribeSpy).toHaveBeenCalledWith('order.created', expect.any(Function));
       expect(subscribeSpy).toHaveBeenCalledWith('product.published', expect.any(Function));
       expect(subscribeSpy).toHaveBeenCalledWith('user.onboarded', expect.any(Function));
+      expect(subscribeSpy).toHaveBeenCalledWith('payment.completed', expect.any(Function));
       
-      // Total subscriptions should be exactly 7 based on our current handler stubs
-      expect(subscribeSpy).toHaveBeenCalledTimes(7);
+      // Total subscriptions should be exactly 8 based on our current handler stubs
+      expect(subscribeSpy).toHaveBeenCalledTimes(8);
     });
   });
 });

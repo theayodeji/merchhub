@@ -9,7 +9,6 @@ interface MetricCardProps {
 }
 
 const MetricCard = ({ icon, label, value, changePercent }: MetricCardProps) => {
-  const isPositive = changePercent > 0;
   const isNeutral = changePercent === 0;
   const isNegative = changePercent < 0;
 

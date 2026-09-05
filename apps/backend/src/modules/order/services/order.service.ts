@@ -256,7 +256,9 @@ export const findOrderById = async (orderId: string) => {
                 select: {
                   name: true,
                   username: true,
-                  displayUsername: true
+                  displayUsername: true,
+                  email: true,
+                  phone: true
                 }
               }
             }

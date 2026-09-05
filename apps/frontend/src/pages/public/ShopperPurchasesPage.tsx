@@ -1,28 +1,55 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Package, Clock, CheckCircle, Truck, XCircle } from 'lucide-react';
-import { useMyOrders } from '@/features/orders/hooks/useMyOrders';
-import { EmptyState } from '@/components/ui/EmptyState';
+import React, { useEffect, useRef } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Package } from "lucide-react";
+import { useMyOrders } from "@/features/orders/hooks/useMyOrders";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { format } from "date-fns";
 
-const StatusIcon = ({ status }: { status: string }) => {
-  switch (status) {
-    case 'PENDING':
-      return <Clock className="w-4 h-4 text-amber-500" />;
-    case 'PROCESSING':
-      return <Package className="w-4 h-4 text-blue-500" />;
-    case 'SHIPPED':
-      return <Truck className="w-4 h-4 text-indigo-500" />;
-    case 'DELIVERED':
-      return <CheckCircle className="w-4 h-4 text-green-500" />;
-    case 'CANCELLED':
-      return <XCircle className="w-4 h-4 text-red-500" />;
-    default:
-      return <Clock className="w-4 h-4 text-gray-500" />;
-  }
+const StatusDotBadge = ({ status }: { status: string }) => {
+  const getStyles = () => {
+    switch (status) {
+      case "PENDING":
+        return "text-amber-500";
+      case "PROCESSING":
+        return "text-blue-500";
+      case "SHIPPED":
+        return "text-orange-500"; // Like "Delivering" in the screenshot
+      case "DELIVERED":
+        return "text-green-500";
+      case "CANCELLED":
+        return "text-red-500";
+      default:
+        return "text-gray-500";
+    }
+  };
+
+  return (
+    <div
+      className={`flex items-center gap-2 text-sm font-medium ${getStyles()}`}
+    >
+      <div className="w-2.5 h-2.5 rounded-full bg-current" />
+      <span className="capitalize">
+        {status.replace("_", " ").toLowerCase()}
+      </span>
+    </div>
+  );
 };
 
 export const ShopperPurchasesPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const highlightedOrderId = searchParams.get("orderId");
+  const highlightRef = useRef<HTMLTableRowElement>(null);
   const { data: orders, isLoading, isError } = useMyOrders();
+
+  useEffect(() => {
+    if (highlightedOrderId && highlightRef.current) {
+      highlightRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [highlightedOrderId, orders]);
 
   if (isLoading) {
     return (
@@ -45,25 +72,27 @@ export const ShopperPurchasesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
-        
+      {/* Expanded max-width to allow the table to breathe properly */}
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-black hover:bg-gray-50 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-gray-900">My Purchases</h1>
+            <h1 className="text-2xl font-black tracking-tight text-gray-900">
+              My Purchases
+            </h1>
             <p className="text-sm font-medium text-gray-500">
               View your past orders and their status
             </p>
           </div>
         </div>
 
-        {(!orders || orders.length === 0) ? (
+        {!orders || orders.length === 0 ? (
           <div className="bg-white rounded-3xl shadow-sm">
             <EmptyState
               icon={Package}
@@ -72,57 +101,104 @@ export const ShopperPurchasesPage: React.FC = () => {
             />
           </div>
         ) : (
-          <div className="space-y-4">
-            {orders.map((order) => (
-              <Link 
-                key={order.id} 
-                to={`/orders/${order.id}`}
-                className="block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 group"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-gray-900">
-                        Order #{order.id.split('-')[0]}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 border border-gray-100">
-                        <StatusIcon status={order.status} />
-                        <span className="capitalize">{order.status.toLowerCase()}</span>
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <div className="text-lg font-black text-gray-900">
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(order.total)}
-                  </div>
-                </div>
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm mb-4">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm text-gray-600">
+                <thead className="border-b border-gray-200 bg-primary/20 text-xs uppercase text-black">
+                  <tr>
+                    <th scope="col" className="px-6 py-4 font-semibold">
+                      Product
+                    </th>
+                    <th scope="col" className="px-6 py-4 font-semibold">
+                      Date
+                    </th>
+                    <th scope="col" className="px-6 py-4 font-semibold">
+                      Address
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-4 font-semibold text-right"
+                    >
+                      Total
+                    </th>
+                    <th scope="col" className="px-6 py-4 font-semibold">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {orders.map((order) => {
+                    const isHighlighted = order.id === highlightedOrderId;
+                    const firstItem = order.items[0];
+                    const extraItems = order.items.length - 1;
 
-                <div className="flex items-center gap-3 overflow-hidden">
-                  {order.items.slice(0, 4).map((item, idx) => (
-                    <div key={idx} className="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
-                      {item.product?.images?.[0] ? (
-                        <img 
-                          src={item.product.images[0]} 
-                          alt={item.product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-300">
-                          <Package className="w-6 h-6" />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  {order.items.length > 4 && (
-                    <div className="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-sm font-bold text-gray-500 flex-shrink-0">
-                      +{order.items.length - 4}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            ))}
+                    return (
+                      <tr
+                        key={order.id}
+                        ref={isHighlighted ? highlightRef : null}
+                        onClick={() => navigate(`/orders/${order.id}`)}
+                        className={`transition-colors hover:bg-neutral-100/50 cursor-pointer ${
+                          isHighlighted ? "bg-blue-50/30" : ""
+                        }`}
+                      >
+                        <td className="px-6 py-2">
+                          <div className="flex items-center gap-4 group min-w-[200px]">
+                            <div className="size-10 shrink-0 overflow-hidden rounded-md border border-gray-200 bg-gray-100 group-hover:border-gray-300 transition-colors flex items-center justify-center">
+                              {firstItem?.product?.images?.[0] ? (
+                                <img
+                                  src={firstItem.product.images[0]}
+                                  alt={firstItem.product.name}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                <Package className="h-full w-full p-3 text-gray-400" />
+                              )}
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900 group-hover:text-primary transition-colors line-clamp-1">
+                                {firstItem?.product?.name || "Unknown Item"}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                x{firstItem?.quantity || 1}
+                                {extraItems > 0 && (
+                                  <span className="ml-1">
+                                    (+{extraItems} more)
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-2 whitespace-nowrap">
+                          {format(
+                            new Date(order.createdAt),
+                            "MMM d, yyyy, h:mm a",
+                          )}
+                        </td>
+                        <td className="px-6 py-2 min-w-[150px]">
+                          <p
+                            className="line-clamp-2"
+                            title={order.deliveryAddress}
+                          >
+                            {order.deliveryAddress ||
+                              `Order #${order.id.split("-")[0]}`}
+                          </p>
+                        </td>
+                        <td className="px-6 py-2 font-medium text-gray-900 text-right whitespace-nowrap">
+                          {new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          }).format(order.total)}
+                        </td>
+                        <td className="px-6 py-2 whitespace-nowrap">
+                          <StatusDotBadge status={order.status} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

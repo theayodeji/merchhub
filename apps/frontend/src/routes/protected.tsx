@@ -7,6 +7,7 @@ import { CreatorDashboardLayout } from '../components/layout/CreatorDashboardLay
 const DashboardHome = React.lazy(() => import('../pages/Dashboard/DashboardHome'));
 const Onboarding = React.lazy(() => import('../pages/Onboarding/Onboarding'));
 const Settings = React.lazy(() => import('../pages/Dashboard/Settings'));
+const Notifications = React.lazy(() => import('../pages/Dashboard/Notifications').then(module => ({ default: module.NotificationsPage })));
 const Products = React.lazy(() => import('../pages/Dashboard/Products'));
 const NewProduct = React.lazy(() => import('../pages/Dashboard/NewProduct'));
 const EditProduct = React.lazy(() => import('../pages/Dashboard/EditProduct'));
@@ -32,6 +33,10 @@ export const protectedRoutes: RouteObject[] = [
       {
         path: 'settings',
         element: <Settings />,
+      },
+      {
+        path: 'notifications',
+        element: <Notifications />,
       },
       {
         path: 'products',

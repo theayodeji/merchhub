@@ -7,10 +7,13 @@ import { useCategories } from "../../features/products/hooks/useCategories";
 
 export const ProductFilters = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
-  
+  const { data: categories = [], isLoading: isLoadingCategories } =
+    useCategories();
+
   // Local state for debounced inputs
-  const [searchValue, setSearchValue] = useState(searchParams.get("search") || "");
+  const [searchValue, setSearchValue] = useState(
+    searchParams.get("search") || "",
+  );
   const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
@@ -70,13 +73,14 @@ export const ProductFilters = () => {
     setSearchValue("");
     setMinPrice("");
     setMaxPrice("");
-    
+
     const newParams = new URLSearchParams();
     setSearchParams(newParams);
   };
 
   const currentCategory = searchParams.get("categoryId") || "";
-  const hasActiveFilters = searchValue || currentCategory || minPrice || maxPrice;
+  const hasActiveFilters =
+    searchValue || currentCategory || minPrice || maxPrice;
 
   return (
     <div className="flex flex-col gap-10 w-full">
@@ -93,18 +97,20 @@ export const ProductFilters = () => {
 
       {/* Categories */}
       <div className="flex flex-col gap-4">
-        <button 
+        <button
           onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
           className="flex items-center justify-between w-full text-left"
         >
-          <h3 className="text-xs font-semibold tracking-widest uppercase text-neutral-500 ml-1">Category</h3>
+          <h3 className="text-xs font-semibold tracking-widest uppercase text-neutral-500 ml-1">
+            Category
+          </h3>
           {isCategoriesOpen ? (
             <ChevronUp className="w-4 h-4 text-neutral-400" />
           ) : (
             <ChevronDown className="w-4 h-4 text-neutral-400" />
           )}
         </button>
-        
+
         {isCategoriesOpen && (
           <div className="flex flex-col gap-1.5">
             {isLoadingCategories ? (
@@ -148,10 +154,14 @@ export const ProductFilters = () => {
 
       {/* Price Range */}
       <div className="flex flex-col gap-4">
-        <h3 className="text-xs font-semibold tracking-widest uppercase text-neutral-500 ml-1">Price Range</h3>
+        <h3 className="text-xs font-semibold tracking-widest uppercase text-neutral-500 ml-1">
+          Price Range
+        </h3>
         <div className="flex items-center gap-3">
           <div className="relative flex-1 group">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 text-sm group-focus-within:text-neutral-900 transition-colors duration-300">$</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 text-sm group-focus-within:text-neutral-900 transition-colors duration-300">
+              $
+            </span>
             <Input
               type="number"
               min="0"
@@ -163,7 +173,9 @@ export const ProductFilters = () => {
           </div>
           <span className="text-neutral-300">-</span>
           <div className="relative flex-1 group">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 text-sm group-focus-within:text-neutral-900 transition-colors duration-300">$</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 text-sm group-focus-within:text-neutral-900 transition-colors duration-300">
+              $
+            </span>
             <Input
               type="number"
               min="0"
@@ -178,8 +190,8 @@ export const ProductFilters = () => {
 
       {hasActiveFilters && (
         <div className="pt-4 border-t border-neutral-100">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             onClick={clearFilters}
             className="w-full flex items-center justify-center gap-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 transition-all duration-300 h-12 rounded-xl font-medium"
           >

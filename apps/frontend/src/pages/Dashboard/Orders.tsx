@@ -5,14 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useCreatorOrders } from "@/features/orders/hooks/useOrders";
 import type { DashboardOrderFilterDTO } from "@merchhub/shared";
 
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-  return debouncedValue;
-}
+import { useDebounce } from "../../hooks/useDebounce";
 
 export const OrdersPage = () => {
   const [page, setPage] = useState(1);

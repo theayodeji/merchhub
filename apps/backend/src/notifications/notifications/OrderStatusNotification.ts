@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { INotification, EmailPayload } from '../types';
+import type { INotification, EmailPayload, DatabasePayload } from '../types';
 import { OrderStatusEmail } from '../templates/OrderStatusEmail';
 
 export class OrderStatusNotification implements INotification {
@@ -17,6 +17,18 @@ export class OrderStatusNotification implements INotification {
         orderId: this.orderId,
         newStatus: this.newStatus
       })
+    };
+  }
+
+  public toDatabase(): DatabasePayload {
+    return {
+      type: 'ORDER_STATUS',
+      title: 'Order Update 📦',
+      message: `Your order status has been updated to ${this.newStatus.replace(/_/g, ' ')}.`,
+      actionUrl: `/profile/purchases?orderId=${this.orderId}`,
+      actorId: null,
+      targetRole: 'CUSTOMER',
+      metadata: { orderId: this.orderId, status: this.newStatus }
     };
   }
 }

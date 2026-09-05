@@ -30,7 +30,7 @@ export const useProductForm = ({ initialData }: UseProductFormProps = {}) => {
       price: initialData ? initialData.price / 100 : 0, // convert cents to dollars
       stock: initialData?.stock || 0,
       categoryId: initialData?.categoryId || '',
-      status: initialData?.status || 'DRAFT',
+      status: (initialData?.status === 'ARCHIVED' ? 'DRAFT' : initialData?.status) || 'DRAFT',
     },
   });
 

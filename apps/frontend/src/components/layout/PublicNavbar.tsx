@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { User, Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RoleSwitcher } from "./RoleSwitcher";
@@ -9,8 +9,20 @@ import { CartModal } from "../../features/marketplace/components/CartModal";
 import { WishlistModal } from "../../features/marketplace/components/WishlistModal";
 import { useCartStore } from "../../store/useCartStore";
 import { useWishlistStore } from "../../store/useWishlistStore";
+import { useDebounce } from "../../hooks/useDebounce";
+import { NotificationBell } from "../../features/notifications/components/NotificationBell";
 
 export const PublicNavbar = () => {
+  const navigate = useNavigate();
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebounce(searchInput, 500);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      navigate(`/search?search=${encodeURIComponent(debouncedSearch.trim())}`);
+    }
+  }, [debouncedSearch, navigate]);
+
   const { data: session } = authClient.useSession();
   const isAuthenticated = !!session?.user;
   const isCreator = session?.user?.role === "CREATOR";
@@ -58,11 +70,23 @@ export const PublicNavbar = () => {
           <div className="relative w-full flex items-center">
             <input
               type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && searchInput.trim()) {
+                  navigate(`/search?search=${encodeURIComponent(searchInput.trim())}`);
+                }
+              }}
               className="block w-full h-10 rounded-full border-0 bg-white/10 py-2 pl-6 pr-32 text-sm text-white placeholder-gray-400 focus:bg-white/15 focus:ring-1 focus:ring-primary outline-none transition-colors"
               placeholder="Search for products..."
             />
             <div className="absolute inset-y-0 right-0 flex items-center">
-              <button className="h-full px-6 rounded-r-full bg-primary hover:bg-primary/90 text-white font-bold text-xs tracking-wider transition-colors">
+              <button 
+                onClick={() => {
+                  if (searchInput.trim()) navigate(`/search?search=${encodeURIComponent(searchInput.trim())}`);
+                }}
+                className="h-full px-6 rounded-r-full bg-primary hover:bg-primary/90 text-white font-bold text-xs tracking-wider transition-colors"
+              >
                 <Search className="size-6" />
               </button>
             </div>
@@ -147,6 +171,7 @@ export const PublicNavbar = () => {
             </div>
           )}
 
+          {isAuthenticated && <NotificationBell />}
           <WishlistModal />
           <CartModal />
         </div>

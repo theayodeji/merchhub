@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { authClient } from '../../../lib/auth-client';
 import { useQueryClient } from '@tanstack/react-query';
+import { useCartStore } from '../../../store/useCartStore';
+import { useWishlistStore } from '../../../store/useWishlistStore';
 
 export const useLogout = () => {
   const navigate = useNavigate();
@@ -8,8 +10,20 @@ export const useLogout = () => {
 
   const handleLogout = async () => {
     await authClient.signOut({});
+    
+    // Clear React Query cache fully
     queryClient.clear();
-    navigate('/login');
+    queryClient.removeQueries();
+    
+    // Clear Zustand stores
+    useCartStore.getState().clearCart();
+    useWishlistStore.getState().clearWishlist();
+    
+    // Clear all local storage
+    localStorage.clear();
+    
+    // Redirect to landing page
+    navigate('/');
   };
 
   return { handleLogout };

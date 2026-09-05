@@ -1,4 +1,4 @@
-import { useState, ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Edit3, Package, DollarSign, Activity, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { useProductDetailsPage } from "../../features/dashboard/hooks/useProductDetailsPage";
@@ -14,7 +14,6 @@ interface ProductMetricCardProps {
 }
 
 const ProductMetricCard = ({ icon, label, value, changePercent }: ProductMetricCardProps) => {
-  const isPositive = changePercent > 0;
   const isNeutral = changePercent === 0;
   const isNegative = changePercent < 0;
 

@@ -10,7 +10,7 @@ export const registerUserHandlers = (): void => {
     
     // Trigger Welcome Email
     const notification = new WelcomeNotification(payload.name || 'Creator');
-    await notificationManager.send({ email: payload.email, name: payload.name || 'Creator' }, notification);
+    await notificationManager.send({ id: payload.userId, email: payload.email, name: payload.name || 'Creator' }, notification);
   });
 
   bus.subscribe('user.onboarded', async (payload) => {

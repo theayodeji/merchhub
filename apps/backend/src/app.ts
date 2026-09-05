@@ -11,6 +11,7 @@ import { userRouter } from './modules/user/routes';
 import { productRouter } from './modules/product/routes';
 import { storefrontRouter } from './modules/storefront/routes';
 import { orderRouter } from './modules/order/routes';
+import { notificationRouter } from './modules/notification/routes/notification.routes';
 
 import { initEventBus } from './events/event-bus';
 import { EmitterDriver } from './events/drivers/emitter.driver';
@@ -45,6 +46,7 @@ app.use('/api/users', userRouter);
 app.use('/api/products', productRouter);
 app.use('/api/storefront', storefrontRouter);
 app.use('/api/orders', orderRouter);
+app.use('/api/notifications', notificationRouter);
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // Global error handler

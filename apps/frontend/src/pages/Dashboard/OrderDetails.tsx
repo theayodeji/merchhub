@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { useOrderDetailsPage } from "../../features/orders/hooks/useOrderDetailsPage";
 import { OrderCustomerDetails } from "../../features/orders/components/OrderCustomerDetails";
 import { OrderItemsList } from "../../features/orders/components/OrderItemsList";
 import { OrderStatusAction } from "../../features/orders/components/OrderStatusAction";
+import { OrderTimeline } from "../../features/orders/components/OrderTimeline";
 
 export default function OrderDetails() {
   const { 
@@ -40,9 +41,9 @@ export default function OrderDetails() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-20">
+    <div className="max-w-[1400px] mx-auto space-y-6 pb-20 animate-slide-in">
       {/* Top Navigation */}
-      <div>
+      <div className="flex justify-between items-center">
         <Link 
           to="/dashboard/orders" 
           className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
@@ -50,43 +51,62 @@ export default function OrderDetails() {
           <ArrowLeft className="mr-2 size-4" />
           Back to Orders
         </Link>
+        
+        <Button variant="outline" asChild className="gap-2">
+          <a href={`/orders/${order.id}`} target="_blank" rel="noreferrer">
+            <Eye className="size-4" /> Preview Customer View
+          </a>
+        </Button>
       </div>
 
-      {/* Main Single Section */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          Order #{shortOrderId}
+        </h1>
+        <p className="text-sm font-medium text-gray-500 mt-2">
+          Placed on {format(new Date(order.createdAt), "MMMM d, yyyy 'at' h:mm a")}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
         
-        {/* Broad Heading */}
-        <div className="border-b border-gray-100 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-              Order #{shortOrderId} details
-            </h1>
-            <p className="text-sm font-medium text-gray-500 mt-1">
-              Placed on {format(new Date(order.createdAt), "MMMM d, yyyy 'at' h:mm a")}
-            </p>
+        {/* MAIN CONTENT (Left - 8 columns) */}
+        <div className="lg:col-span-8 flex flex-col gap-8">
+          
+          {/* Order Items */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+            <OrderItemsList order={order} />
           </div>
-          <span className={`px-3 py-1.5 text-xs font-bold uppercase tracking-widest rounded-md shrink-0 w-max ${
-            order.status === "PENDING" ? "bg-gray-100 text-gray-500" :
-            order.status === "PROCESSING" ? "bg-gray-800 text-white" :
-            order.status === "SHIPPED" ? "bg-gray-200 text-gray-800" :
-            order.status === "DELIVERED" ? "bg-[#FF3333] text-white" :
-            "bg-red-50 text-red-700"
-          }`}>
-            {order.status}
-          </span>
+
+          {/* Status & Action Hero */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1.5 h-full bg-[#FF3333]" />
+            <OrderStatusAction 
+              order={order} 
+              nextAction={nextAction} 
+              isUpdating={isUpdating} 
+              handleUpdateStatus={handleUpdateStatus} 
+            />
+          </div>
+
+          {/* Timeline */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+            <h2 className="text-sm font-bold text-gray-900 mb-6 uppercase tracking-widest">Timeline</h2>
+            <div className="px-2">
+              <OrderTimeline status={order.status} />
+            </div>
+          </div>
+          
         </div>
 
-        <OrderStatusAction 
-          order={order} 
-          nextAction={nextAction} 
-          isUpdating={isUpdating} 
-          handleUpdateStatus={handleUpdateStatus} 
-        />
-
-        <div className="p-6 sm:p-8 space-y-10">
-          <OrderCustomerDetails order={order} shortOrderId={shortOrderId} />
-          <OrderItemsList order={order} />
+        {/* SIDEBAR (Right - 4 columns) */}
+        <div className="lg:col-span-4 flex flex-col gap-8">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8 sticky top-8">
+            <OrderCustomerDetails order={order} shortOrderId={shortOrderId} />
+          </div>
         </div>
+
       </div>
     </div>
   );

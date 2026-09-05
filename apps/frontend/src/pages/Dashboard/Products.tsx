@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { PackageOpen, Plus, Edit, Trash, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  PackageOpen,
+  Plus,
+  Edit,
+  Trash,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   useProducts,
@@ -8,14 +16,7 @@ import {
 } from "../../features/products/hooks/useProducts";
 import type { DashboardProductFilterDTO } from "@merchhub/shared";
 
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-  return debouncedValue;
-}
+import { useDebounce } from "../../hooks/useDebounce";
 
 export default function Products() {
   const [page, setPage] = useState(1);
@@ -84,7 +85,7 @@ export default function Products() {
           <select
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
             value={status || ""}
-            onChange={(e) => setStatus(e.target.value as any || undefined)}
+            onChange={(e) => setStatus((e.target.value as any) || undefined)}
           >
             <option value="">All Statuses</option>
             <option value="PUBLISHED">Published</option>
@@ -107,7 +108,7 @@ export default function Products() {
             No products found
           </h2>
           <p className="mt-2 max-w-sm text-gray-500">
-            {isFiltersEmpty 
+            {isFiltersEmpty
               ? "Get started by adding your first product to your storefront. Customers can't wait to see what you've created!"
               : "Try adjusting your search or filters to find what you're looking for."}
           </p>
@@ -124,23 +125,46 @@ export default function Products() {
         <>
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm mb-4">
             <table className="w-full text-left text-sm text-gray-600">
-              <thead className="border-b border-gray-200 bg-gray-50/50 text-xs uppercase text-gray-500">
+              <thead className="border-b border-gray-200 bg-primary/20 text-xs uppercase text-black">
                 <tr>
-                  <th scope="col" className="px-6 py-4 font-semibold">Product</th>
-                  <th scope="col" className="px-6 py-4 font-semibold">Status</th>
-                  <th scope="col" className="px-6 py-4 font-semibold">Inventory</th>
-                  <th scope="col" className="px-6 py-4 font-semibold">Price</th>
-                  <th scope="col" className="px-6 py-4 text-right font-semibold">Actions</th>
+                  <th scope="col" className="px-6 py-4 font-semibold">
+                    Product
+                  </th>
+                  <th scope="col" className="px-6 py-4 font-semibold">
+                    Status
+                  </th>
+                  <th scope="col" className="px-6 py-4 font-semibold">
+                    Inventory
+                  </th>
+                  <th scope="col" className="px-6 py-4 font-semibold">
+                    Price
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-4 text-right font-semibold"
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {products.map((product) => (
-                  <tr key={product.id} className="transition-colors hover:bg-gray-50/50">
+                  <tr
+                    key={product.id}
+                    className="transition-colors hover:bg-gray-50/50"
+                  >
                     <td className="px-6 py-4">
-                      <Link to={`/dashboard/products/${product.id}`} className="flex items-center gap-4 group cursor-pointer">
+                      <Link
+                        to={`/dashboard/products/${product.id}`}
+                        className="flex items-center gap-4 group cursor-pointer"
+                      >
                         <div className="size-12 shrink-0 overflow-hidden rounded-md border border-gray-200 bg-gray-100 group-hover:border-gray-300 transition-colors">
                           {product.images && product.images[0] ? (
-                            <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+                            <img
+                              src={product.images[0]}
+                              alt={product.name}
+                              className="h-full w-full object-cover"
+                            />
                           ) : (
                             <PackageOpen className="h-full w-full p-3 text-gray-400" />
                           )}
@@ -156,7 +180,9 @@ export default function Products() {
                       </Link>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${product.status === "PUBLISHED" ? "bg-green-100 text-green-800" : product.status === "ARCHIVED" ? "bg-gray-100 text-gray-800" : "bg-yellow-100 text-yellow-800"}`}>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${product.status === "PUBLISHED" ? "bg-green-100 text-green-800" : product.status === "ARCHIVED" ? "bg-gray-100 text-gray-800" : "bg-yellow-100 text-yellow-800"}`}
+                      >
                         {product.status}
                       </span>
                     </td>
@@ -164,7 +190,9 @@ export default function Products() {
                       {product.stock > 0 ? (
                         <span>{product.stock} in stock</span>
                       ) : (
-                        <span className="text-red-600 font-medium">Out of stock</span>
+                        <span className="text-red-600 font-medium">
+                          Out of stock
+                        </span>
                       )}
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-900">
@@ -178,7 +206,11 @@ export default function Products() {
                             <span className="sr-only">Edit product</span>
                           </Link>
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(product.id)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(product.id)}
+                        >
                           <Trash className="size-4" />
                           <span className="sr-only">Delete</span>
                         </Button>
@@ -189,25 +221,50 @@ export default function Products() {
               </tbody>
             </table>
           </div>
-          
+
           {meta && meta.totalPages > 1 && (
             <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-xl shadow-sm">
               <div className="flex flex-1 justify-between sm:hidden">
-                <Button variant="outline" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>Previous</Button>
-                <Button variant="outline" onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))} disabled={page === meta.totalPages}>Next</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setPage((p) => Math.min(meta.totalPages, p + 1))
+                  }
+                  disabled={page === meta.totalPages}
+                >
+                  Next
+                </Button>
               </div>
               <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-gray-700">
-                    Showing <span className="font-medium">{(page - 1) * meta.limit + 1}</span> to <span className="font-medium">{Math.min(page * meta.limit, meta.total)}</span> of <span className="font-medium">{meta.total}</span> results
+                    Showing{" "}
+                    <span className="font-medium">
+                      {(page - 1) * meta.limit + 1}
+                    </span>{" "}
+                    to{" "}
+                    <span className="font-medium">
+                      {Math.min(page * meta.limit, meta.total)}
+                    </span>{" "}
+                    of <span className="font-medium">{meta.total}</span> results
                   </p>
                 </div>
                 <div>
-                  <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                  <nav
+                    className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                    aria-label="Pagination"
+                  >
                     <Button
                       variant="outline"
                       className="rounded-l-md px-2 py-2"
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
                     >
                       <span className="sr-only">Previous</span>
@@ -219,7 +276,9 @@ export default function Products() {
                     <Button
                       variant="outline"
                       className="rounded-r-md px-2 py-2"
-                      onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))}
+                      onClick={() =>
+                        setPage((p) => Math.min(meta.totalPages, p + 1))
+                      }
                       disabled={page === meta.totalPages}
                     >
                       <span className="sr-only">Next</span>

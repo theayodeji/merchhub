@@ -19,7 +19,7 @@ export default function DashboardHome() {
       </div>
 
       <DashboardEmptyStateModal
-        productsCount={products?.length || 0}
+        productsCount={products?.data?.length || 0}
         isLoading={isLoading}
       />
     </div>

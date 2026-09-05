@@ -16,3 +16,4 @@ export * from "./schemas/order.schema";
 export * from "./schemas/pagination";
 export * from "./schemas/products";
 export * from "./schemas/dashboard";
+export * from "./schemas/notification.schema";

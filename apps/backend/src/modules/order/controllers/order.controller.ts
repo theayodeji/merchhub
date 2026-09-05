@@ -4,6 +4,7 @@ import * as orderService from '../services/order.service';
 import { formatProductUrls } from '../../../utils/image.utils';
 
 import { auth } from '../../../config/auth';
+import { UnAuthorizedError } from '../../../errors/AppError';
 
 export const placeOrder = asyncHandler(async (req: Request, res: Response) => {
   const data = req.body;
@@ -87,7 +88,13 @@ export const updateOrderStatus = asyncHandler(async (req: AuthenticatedRequest, 
 
 export const getPublicOrder = asyncHandler(async (req: Request, res: Response) => {
   const id = req.params.id as string;
+  const { email } = req.body;
+  
   const order = await orderService.findOrderById(id);
+  
+  if (order.customerEmail !== email) {
+    throw new UnAuthorizedError('Unauthorized: Email does not match the order');
+  }
   
   // Format the nested product images for the order items
   const formattedOrder = {

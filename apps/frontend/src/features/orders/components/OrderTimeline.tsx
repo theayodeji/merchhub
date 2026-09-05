@@ -29,14 +29,14 @@ export const OrderTimeline: React.FC<OrderTimelineProps> = ({ status }) => {
   const activeIndex = currentStageIndex >= 0 ? currentStageIndex : 0;
 
   return (
-    <div className="py-6 px-4 sm:px-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+    <div className="py-6 px-4 sm:px-6">
       <div className="relative">
         {/* Progress Bar Background */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 rounded-full" />
+        <div className="absolute left-0 top-5 -translate-y-1/2 w-full h-1 bg-gray-100 rounded-full" />
         
         {/* Active Progress Bar */}
         <div 
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-black rounded-full transition-all duration-500 ease-in-out"
+          className="absolute left-0 top-5 -translate-y-1/2 h-1 bg-black rounded-full transition-all duration-500 ease-in-out"
           style={{ width: `${(activeIndex / (STAGES.length - 1)) * 100}%` }}
         />
 

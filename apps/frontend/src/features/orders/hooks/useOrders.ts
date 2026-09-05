@@ -22,6 +22,13 @@ export interface CreatorOrder {
     product: {
       name: string;
       images: string[];
+      seller?: {
+        name: string | null;
+        username: string;
+        displayUsername: string | null;
+        email: string;
+        phone: string | null;
+      };
     };
   }>;
   transaction?: {
@@ -68,8 +75,9 @@ export const useUpdateOrderStatus = () => {
       const response = await apiClient.patch<{ status: string; data: CreatorOrder }>(`/api/orders/creator/${orderId}/status`, { status });
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['creatorOrders'] });
+      queryClient.invalidateQueries({ queryKey: ['creatorOrder', variables.orderId] });
       toast({
         title: 'Status Updated',
         description: 'The order status has been updated successfully.',

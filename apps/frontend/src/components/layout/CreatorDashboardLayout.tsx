@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { 
-  Store, ShoppingBag, LayoutDashboard, Settings, PackageOpen, HelpCircle, ChevronLeft, ChevronRight, User, Menu
+  Store, ShoppingBag, LayoutDashboard, Settings, PackageOpen, HelpCircle, ChevronLeft, ChevronRight, User, Menu, Bell
 } from 'lucide-react';
 import { paths } from '../../config/paths';
 import { useProfile } from '../../features/profile/hooks/useProfile';
 import { useLogout } from '../../features/auth/hooks/useLogout';
 import { authClient } from '../../lib/auth-client';
-import { SidebarSearch } from './sidebar/SidebarSearch';
 import { SidebarNav, type NavItem } from './sidebar/SidebarNav';
 import { SidebarUserFooter } from './sidebar/SidebarUserFooter';
 import { SidebarThemeToggle } from './sidebar/SidebarThemeToggle';
@@ -16,8 +15,9 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '../ui/sheet';
 
 const creatorNavItems: NavItem[] = [
   { name: 'Overview', href: paths.app.dashboard.path, icon: LayoutDashboard },
-  { name: 'Products', href: '/dashboard/products', icon: PackageOpen, badge: 2 },
-  { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag, badge: 14 },
+  { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
+  { name: 'Products', href: '/dashboard/products', icon: PackageOpen },
+  { name: 'Orders', href: '/dashboard/orders', icon: ShoppingBag },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   { name: 'Support', href: '#', icon: HelpCircle },
 ];
@@ -63,7 +63,6 @@ export const CreatorDashboardLayout = () => {
           )}
         </div>
         
-        <SidebarSearch isCollapsed={isCollapsed && !isMobile} />
         <SidebarNav items={navItems} isCollapsed={isCollapsed && !isMobile} label="Menu" showBadges={role === 'CREATOR'} />
         <SidebarThemeToggle isCollapsed={isCollapsed && !isMobile} />
       </div>

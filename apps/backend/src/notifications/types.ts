@@ -5,8 +5,19 @@ export interface EmailPayload {
   template: ReactElement;
 }
 
+export interface DatabasePayload {
+  type: string;
+  title: string;
+  message?: string;
+  actionUrl?: string;
+  actorId?: string | null;
+  metadata?: any;
+  targetRole?: 'CREATOR' | 'CUSTOMER' | 'ALL';
+}
+
 export interface INotification {
-  toEmail(): EmailPayload;
+  toEmail?(): EmailPayload;
+  toDatabase?(): DatabasePayload;
 }
 
 export interface IEmailProvider {

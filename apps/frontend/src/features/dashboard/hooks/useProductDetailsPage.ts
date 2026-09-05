@@ -11,7 +11,7 @@ export const useProductDetailsPage = (productId: string) => {
     if (!product || !allOrders) return null;
 
     // Filter orders that contain this specific product
-    const productOrders = allOrders.filter(order => 
+    const productOrders = allOrders.data?.filter(order => 
       order.items.some(item => item.product.name === product.name)
     );
 

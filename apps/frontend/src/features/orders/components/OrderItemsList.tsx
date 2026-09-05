@@ -8,7 +8,7 @@ interface OrderItemsListProps {
 export const OrderItemsList = ({ order }: OrderItemsListProps) => {
   return (
     <div>
-      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Order Items</h3>
+      <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-6">Order Items</h3>
       <div className="bg-gray-50 rounded-xl p-4 space-y-4">
         {order.items.map((item) => (
           <div key={item.id} className="flex gap-4 items-start">
